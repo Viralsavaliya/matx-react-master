@@ -16,32 +16,40 @@ import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 // import {auth} from './config';
 // import { signInWithPopup ,GoogleAuthProvider , FacebookAuthProvider , GithubAuthProvider , TwitterAuthProvider} from "firebase/auth";
-  
 
-const validationSchema = yup.object({
-    password: yup
-    .string("Enter Your password")
-    .min(2, "Min length")
-    .max(50, "Max length")
-    .required("password is Required"),
-});
+
 
 function LoginpasswordChange() {
 
   const [blog, setblog] = useState([]);
+  const [user, setuser] = useState("");
 
   const [value, setValue] = useState(Date.now());
   const navigate = useNavigate();
 
+  const getusers = () => {
+    axios.get('http://localhost:3000/api/profile')
+      .then((res) => {
+        setuser(res.data.data);
+      })
+
+  };
+
+  useEffect(() => {
+    getusers();
+  }, []);
+
+
+
   const { mutateAsync: cratestate } = useMutation(async (value) => {
-    console.log("value",value);
+    console.log("value", value);
     const token = localStorage.getItem('token');
     console.log(localStorage.getItem('token'))
     axios.defaults.headers.common['Authorization'] = ` ${token}`;
     await axios
       .put(`http://localhost:3000/api/auth/password`, value)
       .then((res) => {
-        if ( res) {
+        if (res) {
           console.log("login Successfully");
           enqueueSnackbar(
             res.data.message,
@@ -63,16 +71,54 @@ function LoginpasswordChange() {
       });
   });
 
+  let validationSchema;
+
+  {
+    user.password === undefined ? (
+      validationSchema = yup.object({
+      password: yup
+        .string("Enter Your password")
+          .min(2, "Min length")
+          .max(50, "Max length")
+          .required("password is Required"),
+          confirmpassword: yup.string()
+            .oneOf([yup.ref('password'), null], 'Passwords must match')
+            .required('Confirm Password is required'),
+          })
+  ) : (
+      validationSchema = yup.object({
+        oldpassword: yup
+          .string("Enter Your password")
+          .min(2, "Min length")
+          .max(50, "Max length")
+          .required("password is Required"),
+        password: yup
+          .string("Enter Your password")
+          .min(2, "Min length")
+          .max(50, "Max length")
+          .required("password is Required"),
+        confirmpassword: yup.string()
+          .oneOf([yup.ref('password'), null], 'Passwords must match')
+          .required('Confirm Password is required'),
+      })
+    )
+  }
+
+
+
   const formik = useFormik({
     initialValues: {
       password: "",
+      oldpassword: "",
+
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-        await cratestate({
-          password: values.password,
-        });
-     
+      await cratestate({
+        password: values.password,
+        oldpassword: values.oldpassword,
+      });
+
     },
   });
   const { handleChange, handleSubmit } = formik;
@@ -83,11 +129,10 @@ function LoginpasswordChange() {
 
 
 
-
   return (
     <div>
       <div style={{ textAlign: "center", width: "100%" }}>
-        <h1>Social login </h1>
+        <h1>Reset password</h1>
         <div>
           <Typography sx={{ p: 2 }}>
             <form onSubmit={handleSubmit}>
@@ -98,6 +143,25 @@ function LoginpasswordChange() {
                 alignItems="center"
                 justifyContent="center"
               >
+                {user.password === undefined ? null : (
+                  <Grid xs={6} mb={1}>
+                    <TextField
+                      fullWidth
+                      id="oldpassword"
+                      name="oldpassword"
+                      label="OldPassword"
+                      type="password"
+                      value={formik.values.oldpassword || blog.oldpassword}
+                      onChange={handleChange}
+                      error={
+                        formik.touched.oldpassword && Boolean(formik.errors.oldpassword)
+                      }
+                      helperText={
+                        formik.touched.oldpassword && formik.errors.oldpassword
+                      }
+                    />
+                  </Grid>
+                )}
                 <Grid xs={6} mb={1}>
                   <TextField
                     fullWidth
@@ -115,6 +179,23 @@ function LoginpasswordChange() {
                     }
                   />
                 </Grid>
+                <Grid xs={6} mb={1}>
+                  <TextField
+                    fullWidth
+                    id="confirmpassword"
+                    name="confirmpassword"
+                    label="ConfirmPassword"
+                    type="password"
+                    value={formik.values.confirmpassword || blog.confirmpassword}
+                    onChange={handleChange}
+                    error={
+                      formik.touched.confirmpassword && Boolean(formik.errors.confirmpassword)
+                    }
+                    helperText={
+                      formik.touched.confirmpassword && formik.errors.confirmpassword
+                    }
+                  />
+                </Grid>
 
                 <Grid xs={6}>
                   <Button
@@ -128,7 +209,7 @@ function LoginpasswordChange() {
                 </Grid>
               </Grid>
             </form>
-           
+
           </Typography>
         </div>
       </div>
