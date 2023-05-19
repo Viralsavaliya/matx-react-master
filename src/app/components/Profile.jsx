@@ -105,6 +105,7 @@ function Profile() {
 
   };
   useEffect(() => {
+
     getusers();
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -178,7 +179,6 @@ function Profile() {
 
   return (
     <div>
-
       <Container >
         <Grid container spacing={2} style={{border:"1px solid black", margin:"10px 0 " , borderRadius:"15px" , padding:"5px" }}>
 
@@ -309,7 +309,7 @@ function Profile() {
                                 variant="contained"
                                 fullWidth
                               >
-                                Register
+                                Update
                               </Button>
                             </Grid>
                           </Grid>

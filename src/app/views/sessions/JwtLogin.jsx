@@ -4,7 +4,7 @@ import { Box, styled, useTheme } from '@mui/material';
 import { Paragraph } from 'app/components/Typography';
 import useAuth from 'app/hooks/useAuth';
 import { Formik } from 'formik';
-import { useState , useReducer} from 'react';
+import { useState , useReducer , createContext} from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import {auth} from '../../components/config';
@@ -14,6 +14,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import GithubIcon from '@mui/icons-material/GitHub';
 import { signInWithPopup ,GoogleAuthProvider  , GithubAuthProvider  } from "firebase/auth";
 import {Button} from "@mui/material";
+// import AuthContext from '../../contexts/JWTAuthContext'
 
 const FlexBox = styled(Box)(() => ({ display: 'flex', alignItems: 'center' }));
 
@@ -28,17 +29,19 @@ const ContentBox = styled(Box)(() => ({
 
 const initialState = {
   user: null,
-  isInitialised: false,
-  isAuthenticated: false
+  isInitialised: true,
+  isAuthenticated: true
 };
+
 
 const reducer = (state, action) => {
   switch (action.type) {
-
+ 
     case 'LOGIN': {
-      const { user } = action.payload;
+      const { isAuthenticated,user } = action.payload;
       console.log(user,"username")
-      return { ...state, isAuthenticated: true, user };
+      console.log(state,"state")
+      return { ...state,  isAuthenticated, user };
       // console.log(isAuthenticated)
       
     }
@@ -46,6 +49,8 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
+
 
 const JWTRoot = styled(JustifyBox)(() => ({
   background: '#1A2038',
@@ -81,7 +86,7 @@ const JwtLogin = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { login } = useAuth();
+  const { login,googleLogin ,githubLogin} = useAuth();
 
   const handleFormSubmit = async (values) => {
     setLoading(true);
@@ -92,80 +97,88 @@ const JwtLogin = () => {
       setLoading(false);
     }
   };
+
+
+
   const handleclick = async () => {
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider).then((data) => {
+    signInWithPopup(auth, provider).then(async(data) => {
       const userdata = {
         userEmail: data.user.email,
         googleId: data.user.uid,
         name: data.user.displayName
       }
       // setvalue(data.user)
-      axios.post('http://localhost:3000/api/auth/login', userdata)
-        .then((res) => {
-          localStorage.setItem('token', "Breaer" + " " + res.data.data.token);
-          const user  = res.data.data.user;
-          // console.log(res.data.data.user,"user");
-          dispatch({ type: 'LOGIN', payload: { user } });
-          // navigate('/dashboard/default')
-          if (res) {
-            enqueueSnackbar(
-              res.data.message,
-              { variant: "success" },
-              { autoHideDuration: 1000 }
-            );
-          }
-        })
-        .catch((error) => {
-          if (error.response.status === 400) {
-            enqueueSnackbar(
-              error.response.data.message,
-              { variant: "error" },
-              { autoHideDuration: 1000 }
-            );
-          }
-        });
+      await googleLogin(userdata);
+      navigate('/');
+
+      // axios.post('http://localhost:3000/api/auth/login', userdata)
+      //   .then((res) => {
+      //     setLoading(true);
+      //     localStorage.setItem('token', "Breaer" + " " + res.data.data.token);
+      //     const user  = res.data.data.user;
+      //     // console.log(res.data.data.user,"user");
+      //     dispatch({ type: 'LOGIN', payload: { user } });
+      //     // navigate('/')
+      //     if (res) {
+      //       enqueueSnackbar(
+      //         res.data.message,
+      //         { variant: "success" },
+      //         { autoHideDuration: 1000 }
+      //       );
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     if (error.response.status === 400) {
+      //       enqueueSnackbar(
+      //         error.response.data.message,
+      //         { variant: "error" },
+      //         { autoHideDuration: 1000 }
+      //       );
+      //     }
+      //   });
     })
   }
 
   const handleclickgithub = async () => {
-    console.log("github");
     const provider = new GithubAuthProvider();
-    console.log("github11");
 
-    signInWithPopup(auth, provider).then((data) => {
-      console.log(data);
+    signInWithPopup(auth, provider).then(async(data) => {
+      // console.log(data);
       const userdata = {
         userEmail: data.user.email,
         githubId: data.user.uid,
         name: data.user.displayName
       }
       // setvalue(data.user)
-      axios.post('http://localhost:3000/api/auth/login', userdata)
-        .then((res) => {
-          // localStorage.setItem('token', token);
-          console.log(res, 'res')
-          if (res) {
-            navigate('/dashboard/default')
-            localStorage.setItem('token', "Breaer" + " " + res.data.data);
-            enqueueSnackbar(
-              res.data.message,
-              { variant: "success" },
-              { autoHideDuration: 1000 }
-            );
-          }
-        })
-        .catch((error) => {
-          if (error.response.status === 400) {
-            enqueueSnackbar(
-              error.response.data.message,
-              { variant: "error" },
-              { autoHideDuration: 1000 }
-            );
-          }
-        });
+      await githubLogin(userdata);
+      navigate('/');
+
+      // axios.post('http://localhost:3000/api/auth/login', userdata)
+      //   .then((res) => {
+      //     if (res) {
+      //       // navigate('dashboard/default')
+      //       dispatch({ type: 'LOGIN', payload: { user:res.data.data.user } });
+      //       localStorage.setItem('token', "Breaer" + " " + res.data.data.token);
+      //       enqueueSnackbar(
+      //         res.data.message,
+      //         { variant: "success" },
+      //         { autoHideDuration: 1000 }
+      //       );
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     if (error.response.status === 400) {
+      //       enqueueSnackbar(
+      //         error.response.data.message,
+      //         { variant: "error" },
+      //         { autoHideDuration: 1000 }
+      //       );
+      //     }
+      //   });
     })
   }
+
 
   return (
     <JWTRoot>
@@ -267,7 +280,6 @@ const JwtLogin = () => {
       </Grid>
         </Grid>
       </Card>
-      
     </JWTRoot>
   );
 };

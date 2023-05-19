@@ -38,7 +38,8 @@ const routes = [
       {
         path:"/password",
         element:<LoginpasswordChange />
-      }
+      },
+      
 
     ]
   },

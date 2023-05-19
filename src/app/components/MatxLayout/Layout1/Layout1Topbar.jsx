@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo , useState , useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import {
   Avatar,
@@ -12,6 +12,8 @@ import {
   useTheme
 } from '@mui/material';
 
+import axios from "axios";
+
 import { MatxMenu, MatxSearchBox } from 'app/components';
 import { themeShadows } from 'app/components/MatxTheme/themeColors';
 import { NotificationProvider } from 'app/contexts/NotificationContext';
@@ -23,6 +25,9 @@ import { Span } from '../../Typography';
 import NotificationBar from '../../NotificationBar/NotificationBar';
 import ShoppingCart from '../../ShoppingCart';
 import Profile from 'app/components/Profile';
+
+const token = localStorage.getItem('token');
+axios.defaults.headers.common['Authorization'] = ` ${token}`;
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   color: theme.palette.text.primary
@@ -55,6 +60,8 @@ const TopbarContainer = styled(Box)(({ theme }) => ({
   }
 }));
 
+
+
 const UserMenu = styled(Box)({
   padding: 4,
   display: 'flex',
@@ -83,9 +90,24 @@ const IconBox = styled('div')(({ theme }) => ({
 }));
 
 const Layout1Topbar = () => {
+  const [userdata, setuserdata] = useState('');
+  const getusers = () => {
+    axios.get('http://localhost:3000/api/profile')
+      .then((res) => {
+        setuserdata(res.data.data);
+      })
+
+  };
   const theme = useTheme();
   const { settings, updateSettings } = useSettings();
   const { logout, user } = useAuth();
+
+  useEffect(() => {
+      getusers();
+    }, [user]);
+
+
+  
   const isMdScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const updateSidebarMode = (sidebarSettings) => {
@@ -93,6 +115,8 @@ const Layout1Topbar = () => {
   };
 
   const handleSidebarToggle = () => {
+
+
     let { layout1Settings } = settings;
     let mode;
     if (isMdScreen) {
@@ -135,15 +159,16 @@ const Layout1Topbar = () => {
 
           <ShoppingCart />
 
-          <MatxMenu
+          <MatxMenu style={{width:"25%"}}
             menuButton={
               <UserMenu>
                 <Hidden xsDown>
                   <Span>
-                    Hi <strong>{user.userName}</strong>
+                    Hi <strong>{userdata?.userName}</strong>
                   </Span>
                 </Hidden>
-                <Avatar src={user.avatar} sx={{ cursor: 'pointer' }} />
+                <img src={"http://localhost:3000/" + userdata?.image}  alt="" srcset="" sx={{ cursor: 'pointer' }} style={{borderRadius:"50%",height: "36px",width: "36px", objectFit:"cover"}} />
+                {/* <Avatar src={user.image} sx={{ cursor: 'pointer' }} /> */}
               </UserMenu>
             }
           >

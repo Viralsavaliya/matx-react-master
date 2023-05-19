@@ -48,7 +48,7 @@ function LoginpasswordChange() {
             { variant: "success" },
             { autoHideDuration: 1000 }
           );
-          navigate('/signin')
+          navigate('/profile')
         }
       })
       .catch((error) => {
