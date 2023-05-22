@@ -112,31 +112,6 @@ const JwtLogin = () => {
       await googleLogin(userdata);
       navigate('/');
 
-      // axios.post('http://localhost:3000/api/auth/login', userdata)
-      //   .then((res) => {
-      //     setLoading(true);
-      //     localStorage.setItem('token', "Breaer" + " " + res.data.data.token);
-      //     const user  = res.data.data.user;
-      //     // console.log(res.data.data.user,"user");
-      //     dispatch({ type: 'LOGIN', payload: { user } });
-      //     // navigate('/')
-      //     if (res) {
-      //       enqueueSnackbar(
-      //         res.data.message,
-      //         { variant: "success" },
-      //         { autoHideDuration: 1000 }
-      //       );
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     if (error.response.status === 400) {
-      //       enqueueSnackbar(
-      //         error.response.data.message,
-      //         { variant: "error" },
-      //         { autoHideDuration: 1000 }
-      //       );
-      //     }
-      //   });
     })
   }
 
