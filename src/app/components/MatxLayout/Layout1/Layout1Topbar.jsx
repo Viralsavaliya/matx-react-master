@@ -27,6 +27,7 @@ import ShoppingCart from '../../ShoppingCart';
 import Profile from 'app/components/Profile';
 
 const token = localStorage.getItem('token');
+console.log(token,"userauth token");
 axios.defaults.headers.common['Authorization'] = ` ${token}`;
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -89,22 +90,22 @@ const IconBox = styled('div')(({ theme }) => ({
   [theme.breakpoints.down('md')]: { display: 'none !important' }
 }));
 
+
+
 const Layout1Topbar = () => {
   const [userdata, setuserdata] = useState('');
-  const getusers = () => {
-    axios.get('http://localhost:3000/api/profile')
-      .then((res) => {
-        setuserdata(res.data.data);
-      })
-
-  };
+  
   const theme = useTheme();
   const { settings, updateSettings } = useSettings();
   const { logout, user } = useAuth();
+  console.log(user);
 
+  
   useEffect(() => {
-      getusers();
-    }, [user]);
+    setuserdata(user);
+  },[user]);
+
+ 
 
 
   
