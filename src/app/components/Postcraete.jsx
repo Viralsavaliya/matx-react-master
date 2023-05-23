@@ -108,7 +108,7 @@
  
     const handleDelete = async (data) => {
       if (update) {
-        axios.delete(`http://localhost:3000/api/blog/${update}`).then((res) => {
+        axios.delete(`http://localhost:3000/api/post/${update}`).then((res) => {
           if ({ res: true }) {
             setupdate();
             console.log("Blog Delete Successfully");
@@ -427,7 +427,7 @@
                 </TableCell>
                 <TableCell align="left">
                   <img
-                    src={"http://localhost:3000/uploads/blog/" + row?.image}
+                    src={"http://localhost:3000/" + row?.image}
                     height="70px"
                     alt=""
                     srcset=""

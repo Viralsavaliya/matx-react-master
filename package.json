@@ -41,6 +41,7 @@
     "echarts-for-react": "^3.0.2",
     "firebase": "^9.22.0",
     "formik": "^2.2.9",
+    "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "notistack": "^3.0.1",
