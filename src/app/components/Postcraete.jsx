@@ -429,6 +429,7 @@
                   <img
                     src={"http://localhost:3000/" + row?.image}
                     height="70px"
+                    width="150px"
                     alt=""
                     srcset=""
                   />
