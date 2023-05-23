@@ -44,7 +44,7 @@
     //   .min(2, "Min length")
     //   .max(50, "Max length")
     //   .required("title is Required"),
-    // content: yup
+    // discripation: yup
     //   .string("Enter Your conatnt")
     //   .min(2, "Min length")
     //   .max(50, "Max length")
@@ -70,13 +70,12 @@
     const [con, setcon] = useState();
     const [isChecked, setIsChecked] = useState(false);
   
-    console.log("isChecked", isChecked);
   
     const handleClickOpen = () => {
       setOpen(true);
       setdata("");
       setFieldValue("title", "");
-      setFieldValue("content", "");
+      setFieldValue("discripation", "");
     };
   
     const handleChangePage = (event, newPage) => {
@@ -93,40 +92,20 @@
     };
   
     useEffect(() => {
-      gethobby();
-      getcategory();
+      getuserpost()
     }, [update, open, page, rowsPerPage]);
   
     const handleClick = async (data) => {
       console.log("data", data);
       setdata(data.category_id?._id);
       setFieldValue("title", data.title);
-      // setFieldValue("content", data.content);
-      setcon(data.content);
-      // setValue(Date.now());
-      // console.log(new Date((data.post_date)));
-      // console.log(setValue(data.post_date))
-      // setFieldValue("post_date", data.post_date);
+      setcon(data.discripation);
       setupdate(data._id);
       // console.log(data._id);
       setOpen(true);
     };
   
-    // const uploadfile = (e) => {
-    //   console.log("api call");
-    //   let file = e.target.files[0];
-    //   const formData = new FormData();
-    //   formData.append("file", file);
-  
-    //   return axios
-    //     .post(`http://localhost:3000/api/blog/upload`, formData)
-    //     .then((res) => {
-    //       console.log(res.data.data);
-    //       setimage(res.data.data);
-    //       // return setvalue(res.data);
-    //     });
-    // };
-  
+ 
     const handleDelete = async (data) => {
       if (update) {
         axios.delete(`http://localhost:3000/api/blog/${update}`).then((res) => {
@@ -143,36 +122,40 @@
       }
       setIsDeleteDialogOpen(false);
     };
+
+    const token = localStorage.getItem('token');
+  axios.defaults.headers.common['Authorization'] = ` ${token}`;
   
-    const getcategory = () => {
-      axios.get("http://localhost:3000/api/category").then((res) => {
-        //   console.log(res.data.data.category);
-        return setcategory(res.data.data.category);
-      });
-    };
-  
-    const gethobby = () => {
+
+    const getuserpost = () => {
       // console.log("api call")
       axios
-        .get(`http://localhost:3000/api/blog?limit=${rowsPerPage}&page=${page}`)
+        .get(`http://localhost:3000/api/post/oneuserpost`)
         .then((res) => {
-          // console.log("api callssss")
-          // console.log(res.data.data[1]);
-          settotalrecord(res.data.data.count);
-          return setblog(res.data.data.blog);
+          return setblog(res.data.data);
         });
     };
+
+
+    
+    
+    const handleFileSelect = (e) => {
+        console.log(e.target.files[0])
+        setimage(e.target.files[0]);
+      };
     const { mutateAsync: cratepost } = useMutation(async (value) => {
-    let file = value.target.files[0];
-      const formData = new FormData();
-      formData.append("file", file);
-      console.log("value", value);
-      console.log("data", data);
+        console.log("value", value);
+        const formData = new FormData();
+        formData.append('file', image);
+        formData.append('title', value.title);
+        formData.append('discripation', value.discripation);
+        console.log("data", formData);
+      
       await axios
-        .post(`http://localhost:3000/api/post`, value)
+        .post(`http://localhost:3000/api/post`, formData)
         .then((res) => {
           if ({ res: true }) {
-            console.log("blog create Successfully");
+            console.log("post create Successfully");
             enqueueSnackbar(
               "Blog add Successfully",
               { variant: "success" },
@@ -187,7 +170,7 @@
           if (error.response.status === 422) {
             console.log("axios error");
             enqueueSnackbar(
-              "This blog already added",
+              "This post already added",
               { variant: "error" },
               { autoHideDuration: 1000 }
             );
@@ -232,9 +215,9 @@
         image: "",
         title: "",
         check: "",
-        content: "",
+        discripation: "",
       },
-      validationSchema: validationSchema,
+    //   validationSchema: validationSchema,
       onSubmit: async (values) => {
         //   console.log("update", update);
         if (update) {
@@ -242,14 +225,14 @@
             // category_id: values.category_id,
             image: image,
             title: values.title,
-            content: con,
+            discripation: con,
           });
         } else {
           await cratepost({
             // category_id: values.category_id,
             image: image,
             title: values.title,
-            content: con,
+            discripation: con,
           });
         }
       },
@@ -341,7 +324,7 @@
                           name="image"
                           type="File"
                           accept="*/image"
-                          onChange={handleChange}
+                          onChange={(e) => handleFileSelect(e)}
                           error={
                             formik.touched.image && Boolean(formik.errors.image)
                           }
@@ -409,26 +392,9 @@
                 }}
                 align="left"
               >
-                content
+                discripation
               </TableCell>
-              <TableCell
-                style={{
-                  fontSize: 22,
-                  color: "rgb(38 28 26 / 87%)",
-                }}
-                align="left"
-              >
-                Post_date
-              </TableCell>
-              <TableCell
-                style={{
-                  fontSize: 22,
-                  color: "rgb(38 28 26 / 87%)",
-                }}
-                align="left"
-              >
-                Category
-              </TableCell>
+             
               <TableCell
                 style={{
                   fontSize: 22,
@@ -470,11 +436,7 @@
                 <TableCell align="left">{row?.title}</TableCell>
                 <TableCell align="left">
                   {" "}
-                  <div dangerouslySetInnerHTML={{ __html: row?.content }} />
-                </TableCell>
-                <TableCell align="left">{row?.post_date}</TableCell>
-                <TableCell align="left">
-                  {row.category_id?.categoryName}
+                  <div dangerouslySetInnerHTML={{ __html: row?.discripation }} />
                 </TableCell>
                 <TableCell align="left">
                   {row?.status === true ? "Active" : "Inactive"}
