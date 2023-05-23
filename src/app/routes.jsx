@@ -9,7 +9,8 @@ import LoginpasswordChange from './components/LoginPasswordChange';
 import Resetpasswordsendemail from './components/Resetpasswordsendemail';
 import Verificationotp from './components/Verificationotp';
 import Forgetpassword from './components/Forgetpassword';
-
+import Postcreate from './components/Postcraete';
+import materialRoutes from 'app/views/material-kit/MaterialRoutes';
 // session pages
 const NotFound = Loadable(lazy(() => import('app/views/sessions/NotFound')));
 const JwtLogin = Loadable(lazy(() => import('app/views/sessions/JwtLogin')));
@@ -28,7 +29,7 @@ const routes = [
       </AuthGuard>
     ),
     children: [
-      // dashboard route
+      ...materialRoutes,
       {
         path: '/dashboard/default',
         element: <Analytics />,
@@ -42,6 +43,7 @@ const routes = [
         path:"/password",
         element:<LoginpasswordChange />
       },
+      
       
       
 

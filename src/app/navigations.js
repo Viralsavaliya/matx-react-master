@@ -1,3 +1,4 @@
+import Postcreate from "./components/Postcraete";
 import Profile from "./components/Profile";
 
 export const navigations = [
@@ -19,8 +20,11 @@ export const navigations = [
     icon: 'favorite',
     // badge: { value: '30+', color: 'secondary' },
     children: [
-      {name:'/profile', path:<Profile />}
+
+      // {name:'profile', path:<Profile />},
+      // {name:'create post', path:<Postcreate />}
       
+      { name: 'craete post', path: '/createpost', iconText: 'post' },
       // { name: 'Auto Complete', path: '/material/autocomplete', iconText: 'A' },
     ]
   }
