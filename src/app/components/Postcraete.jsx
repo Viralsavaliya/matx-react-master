@@ -74,7 +74,8 @@
     const handleClickOpen = () => {
       setOpen(true);
       setdata("");
-      setFieldValue("title", "");
+      setFieldValue("title", ""); 
+      setcon("")
       setFieldValue("discripation", "");
     };
   
@@ -113,7 +114,7 @@
             setupdate();
             console.log("Blog Delete Successfully");
             enqueueSnackbar(
-              "Blog delete successfully",
+              "Post delete successfully",
               { variant: "success" },
               { autoHideDuration: 1000 }
             );
@@ -157,7 +158,7 @@
           if ({ res: true }) {
             console.log("post create Successfully");
             enqueueSnackbar(
-              "Blog add Successfully",
+              "Post add Successfully",
               { variant: "success" },
               { autoHideDuration: 1000 }
             );
@@ -187,7 +188,7 @@
           if ({ res: true }) {
             //   console.log("blog update Successfully");
             enqueueSnackbar(
-              "update blog Successfully",
+              "update post Successfully",
               { variant: "success" },
               { autoHideDuration: 1000 }
             );
@@ -440,7 +441,7 @@
                   <div dangerouslySetInnerHTML={{ __html: row?.discripation }} />
                 </TableCell>
                 <TableCell align="left">
-                  {row?.status === true ? "Active" : "Inactive"}
+                  {row?.status}
                 </TableCell>
                 <TableCell align="left" style={{ width: "230px" }}>
                   <Button
