@@ -179,11 +179,13 @@
         });
     });
     const { mutateAsync: updatestate } = useMutation(async (value) => {
-      // console.log("value", value);
-      // console.log("data",data)
-      value.country_id = data;
+      const formData = new FormData();
+      formData.append('file', image);
+      formData.append('title', value.title);
+      formData.append('discripation', value.discripation);
+      console.log("data", formData);
       await axios
-        .put(`http://localhost:3000/api/blog/${update}`, value)
+        .put(`http://localhost:3000/api/post/${update}`, formData)
         .then((res) => {
           if ({ res: true }) {
             //   console.log("blog update Successfully");

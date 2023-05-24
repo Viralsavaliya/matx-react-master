@@ -1,6 +1,7 @@
 import { lazy } from 'react';
 import Loadable from 'app/components/Loadable';
 import Postcreate from 'app/components/Postcraete';
+import ViewAllPost from 'app/components/ViewAllPost';
 
 // const AppTable = Loadable(lazy(() => import('./tables/AppTable')));
 // const AppForm = Loadable(lazy(() => import('./forms/AppForm')));
@@ -19,6 +20,7 @@ import Postcreate from 'app/components/Postcraete';
 
 const materialRoutes = [
   { path: "/createpost", element: <Postcreate /> },
+  { path: "/allpost", element: <ViewAllPost /> }, 
   // { path: '/material/table', element: <AppTable /> },
   // { path: '/material/form', element: <AppForm /> },
   // { path: '/material/buttons', element: <AppButton /> },
