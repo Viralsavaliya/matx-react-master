@@ -45,8 +45,7 @@ function ViewAllPost() {
   axios.defaults.headers.common['Authorization'] = ` ${token}`;
 
   const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.body2,
+    boxShadow: "0 0 0 0 white",
     padding: theme.spacing(1),
     fontSize: "20px",
     margin: "10px",
@@ -78,14 +77,18 @@ function ViewAllPost() {
             <h1>View Post</h1>
           </Grid>
           {post.map((user) => (
-            <Grid  container direction="row" justifyContent="center" alignItems="center"  xs={12}>
-              <Grid  xs={10} sm={12}>
-                <img src={"http://localhost:3000/" + user?.image} style={{ objectFit: "contain" }} width="100%" height="400px" alt="" srcset="" />
-
-              </Grid>
-              <Grid xs={12}  md={7}>
-                <Item><b>Title:</b>  {user?.title}</Item>
-                <Item><b>Discripation:</b><p dangerouslySetInnerHTML={{ __html: user.discripation }} /></Item>
+            <Grid container direction="row" justifyContent="center" alignItems="center" xs={12}>
+              <Grid  md={7} sm={12} border="1px solid gray" style={{borderRadius:"20px",marginBottom:"15px"}}>
+                <Grid xs={12}>
+                  <Item><img src={"http://localhost:3000/" + user?.userid.image} style={{ objectFit: "cover", borderRadius: "50%", margin: " 0 0 -15px 0" }} sm={12} width="40" height="40" alt="" srcset="" /><span style={{ margin: " 0 0 0 15px" }}>{user?.userid.userName}</span>  </Item>
+                </Grid>
+                <Grid xs={12} sm={12}>
+                  <img src={"http://localhost:3000/" + user?.image} style={{ objectFit: "contain" }} width="100%" height="400px" alt="" srcset="" />
+                </Grid>
+                <Grid xs={12} md={12}>
+                  <Item>{user?.title}</Item>
+                  <Item ><p style={{margin:"-40px 0 -22px 0px"}} dangerouslySetInnerHTML={{ __html: user.discripation }} /></Item>
+                </Grid>
               </Grid>
             </Grid>
           ))}
