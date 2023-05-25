@@ -1,8 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { faPhone } from '@fortawesome/free-solid-svg-icons';
-import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import { faHeart } from '@fortawesome/free-solid-svg-icons';
 
 import {
   Box,
@@ -39,6 +36,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 function ViewAllPost() {
   const [post, setpost] = useState([]);
+  const [isLiked, setIsLiked] = useState(false);
 
 
   const token = localStorage.getItem('token');
@@ -51,14 +49,48 @@ function ViewAllPost() {
     margin: "10px",
   }));
 
+  const handleLike = (user) => {
+    console.log(user, "handleLike");
+    if (user.isLikedByUser === false) {
+      axios
+        .post(`http://localhost:3000/api/like`, { postid: user._id })
+        .then((res) => {
+          console.log(res.data.data);
+        });
+        getallpost();
+    } else {
+      const postid = user._id;
+      const userid = user.userid;
+
+      axios
+        .delete(
+          `http://localhost:3000/api/like?postid=${postid}&userid=${userid}`
+        )
+        .then((res) => {
+          console.log(res.data.data);
+          // setpost(res.data.data);
+          getallpost();
+        });
+    }
+    setpost((prevPosts) => {
+      return prevPosts.map((post) => {
+        if (post._id === user._id) {
+          return { ...post, isLiked: !post.isLiked };
+        }
+        return post;
+      });
+    });
+  };
+
+
+
   const getallpost = () => {
     axios.get(`http://localhost:3000/api/post`)
       .then((res) => {
-        console.log(res.data.data.data);
+        console.log(res.data.data, "all dataa gettt");
         setpost(res.data.data);
       })
   };
-
 
   useEffect(() => {
     getallpost();
@@ -76,18 +108,23 @@ function ViewAllPost() {
           <Grid xs={12} style={{ textAlign: "center" }}>
             <h1>View Post</h1>
           </Grid>
-          {post.map((user) => (
+          {post?.map((user) => (
             <Grid container direction="row" justifyContent="center" alignItems="center" xs={12}>
-              <Grid  md={7} sm={12} border="1px solid gray" style={{borderRadius:"20px",marginBottom:"15px"}}>
+              <Grid md={7} sm={12} border="1px solid gray" style={{ borderRadius: "20px", marginBottom: "15px" }}>
                 <Grid xs={12}>
-                  <Item><img src={"http://localhost:3000/" + user?.userid.image} style={{ objectFit: "cover", borderRadius: "50%", margin: " 0 0 -15px 0" }} sm={12} width="40" height="40" alt="" srcset="" /><span style={{ margin: " 0 0 0 15px" }}>{user?.userid.userName}</span>  </Item>
+                  <Item><img src={"http://localhost:3000/" + user?.userimage} style={{ objectFit: "cover", borderRadius: "50%", margin: " 0 0 -15px 0" }} sm={12} width="40" height="40" alt="" srcset="" /><span style={{ margin: " 0 0 0 15px" }}>{user?.userName}</span>  </Item>
                 </Grid>
                 <Grid xs={12} sm={12}>
                   <img src={"http://localhost:3000/" + user?.image} style={{ objectFit: "contain" }} width="100%" height="400px" alt="" srcset="" />
                 </Grid>
                 <Grid xs={12} md={12}>
+                  <Item><FontAwesomeIcon
+                    onClick={() => handleLike(user)}
+                    style={{ color: user?.isLikedByUser == true ? 'red' : 'black', cursor: 'pointer' }}
+                    icon={faHeart} /> {user?.likescount}</Item>
+
                   <Item>{user?.title}</Item>
-                  <Item ><p style={{margin:"-40px 0 -22px 0px"}} dangerouslySetInnerHTML={{ __html: user.discripation }} /></Item>
+                  <Item ><p style={{ margin: "-40px 0 -22px 0px" }} dangerouslySetInnerHTML={{ __html: user.discripation }} /></Item>
                 </Grid>
               </Grid>
             </Grid>
