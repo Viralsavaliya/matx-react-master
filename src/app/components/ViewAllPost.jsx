@@ -64,7 +64,7 @@ function ViewAllPost() {
 
       axios
         .delete(
-          `http://localhost:3000/api/like?postid=${postid}&userid=${userid}`
+          `http://localhost:3000/api/like?postid=${postid}`
         )
         .then((res) => {
           console.log(res.data.data);
