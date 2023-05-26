@@ -17,9 +17,7 @@ import {
   // import {auth} from './config';
   // import { signInWithPopup ,GoogleAuthProvider , FacebookAuthProvider , GithubAuthProvider , TwitterAuthProvider} from "firebase/auth";
   
-  const token = localStorage.getItem('token');
-  axios.defaults.headers.common['Authorization'] = ` ${token}`;
-  
+ 
   function Verificationotp() {
   
     const [blog, setblog] = useState([]);
@@ -29,6 +27,8 @@ import {
     const navigate = useNavigate();
   
     const getusers = () => {
+      const token = localStorage.getItem('token');
+      axios.defaults.headers.common['Authorization'] = ` ${token}`;
       axios.get('http://localhost:3000/api/profile')
         .then((res) => {
           setuser(res.data.data);
@@ -40,9 +40,12 @@ import {
       getusers();
     }, []);
   
-  
+   
+    
   
     const { mutateAsync: cratestate } = useMutation(async (value) => {
+      const token = localStorage.getItem('token');
+      axios.defaults.headers.common['Authorization'] = ` ${token}`;
       await axios
         .post(`http://localhost:3000/api/auth/verificationotp`, value)
         .then((res) => {
