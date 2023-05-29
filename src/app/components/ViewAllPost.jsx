@@ -39,51 +39,45 @@ function ViewAllPost() {
     setuser(user);
     console.log("User Details:", user);
   })
-    //   const decodedToken = jwt_decode(token);
-    //   console.log(decodedToken,"decodedToken");
-    //   const name = decodedToken.userName
-    //   console.log(name,"name");
-    //   const { id, userName } = decodedToken;
-    //   console.log("Logged-in User ID:", id  );
-    //   console.log("Logged-in User name:", name  );
-    //   console.log("Logged-in Username:", userName);
+  
     }
   },[]);
 
-// const Item = () => {
-//   <div>
 
-//   </div>
-// boxShadow: "0 0 0 0 white",
-// padding: theme.spacing(1),
-// fontSize: "20px",
-// margin: "10px",
-// };
 
-const handleLike = (user) => {
-  console.log(user, "handleLike");
-  if (user.isLikedByUser === false) {
-    axios
-      .post(`http://localhost:3000/api/like`, { postid: user._id })
-      .then((res) => {
-        console.log(res.data.data);
-      });
-    getallpost();
-  } else {
-    const postid = user._id;
-    const userid = user.userid;
+  const handleLike = (user) => {
+    if (!user.isLikedByUser) {
+      axios
+        .post(`http://localhost:3000/api/like`, { postid: user._id })
+        .then((res) => {
+          console.log(res.data.data);
+          user.isLikedByUser = true;
+          user.likescount += 1;
+          setPost((prevPosts) => {
+            return prevPosts.map((p) => (p._id === user._id ? user : p));
+          });
+        })
+        .catch((error) => {
+          console.log("Error liking post:", error);
+        });
+    } else {
+      axios
+        .delete(`http://localhost:3000/api/like?postid=${user._id}`)
+        .then((res) => {
+          console.log(res.data.data);
+          user.isLikedByUser = false;
+          user.likescount -= 1;
+          setPost((prevPosts) => {
+            return prevPosts.map((p) => (p._id === user._id ? user : p));
+          });
+        })
+        .catch((error) => {
+          console.log("Error unliking post:", error);
+        });
+    }
+  };
+  
 
-    axios
-      .delete(
-        `http://localhost:3000/api/like?postid=${postid}`
-      )
-      .then((res) => {
-        console.log(res.data.data);
-        // setpost(res.data.data);
-        getallpost();
-      });
-  }
-};
 
 const commentMutation = useMutation((commentData) =>
   axios.post("http://localhost:3000/api/comment", commentData)
