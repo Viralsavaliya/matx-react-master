@@ -108,7 +108,6 @@ export const AuthProvider = ({ children }) => {
     (async () => {
       try {
         const token = localStorage.getItem('token');
-        console.log(token,"token");
         axios.defaults.headers.common['Authorization'] = ` ${token}`;
         const { data } = await axios.get('http://localhost:3000/api/profile');
         dispatch({ type: 'INIT', payload: { isAuthenticated: true, user: data.user } });

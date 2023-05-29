@@ -27,7 +27,6 @@ import ShoppingCart from '../../ShoppingCart';
 import Profile from 'app/components/Profile';
 
 const token = localStorage.getItem('token');
-console.log(token,"userauth token");
 axios.defaults.headers.common['Authorization'] = ` ${token}`;
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -98,7 +97,6 @@ const Layout1Topbar = () => {
   const theme = useTheme();
   const { settings, updateSettings } = useSettings();
   const { logout, user } = useAuth();
-  console.log(user);
 
   
   useEffect(() => {
