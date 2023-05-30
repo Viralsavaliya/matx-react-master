@@ -26,6 +26,7 @@ export const navigations = [
       
       { name: 'craete post', path: '/createpost', iconText: 'post' },
       { name: 'All post', path: '/allpost', iconText: 'post' },
+      { name: 'Follow', path: '/follow', iconText: 'follow' },
       // { name: 'Auto Complete', path: '/material/autocomplete', iconText: 'A' },
     ]
   }
