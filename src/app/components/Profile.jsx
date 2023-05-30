@@ -29,7 +29,8 @@ import { enqueueSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import { useMutation } from "react-query";
 import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
+import AllFollowingshow from './AllFollowingshow';
 
 
 const validationSchema = yup.object({
@@ -54,6 +55,7 @@ function Profile() {
   const navigate = useNavigate();
   const [selectedValue, setSelectedValue] = useState('');
   const [image, setimage] = useState("");  
+  const [follow, setfollow] = useState("");  
   const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
 
 
@@ -97,16 +99,30 @@ function Profile() {
       });
   };
 
+  const getfollowing = () => {
+    axios.get('http://localhost:3000/api/follow/following')
+      .then((res) => {
+            setfollow(res.data.data[0]);
+      })
+  };
+
+  const allfollowingshow = () => {
+    const alldata = follow.followedUsers;
+    console.log(alldata,"alldata");
+    navigate('/allfollowingshow',{state:alldata});
+  }
+
   const getusers = () => {
     axios.get('http://localhost:3000/api/profile')
       .then((res) => {
         setuser(res.data.data);
       })
-
   };
+
   useEffect(() => {
 
     getusers();
+    getfollowing();
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -322,6 +338,7 @@ function Profile() {
             </div>
           </Grid>
           <Grid item xs={8} >
+            <div onClick={allfollowingshow}  style={{fontSize:"20px" , textAlign:"center"}}>Following<br/>{follow.followCount}</div> 
             <Item> <FontAwesomeIcon icon={faUser} /> &nbsp; {user.userName}</Item>
             <Item><FontAwesomeIcon icon={faEnvelope} /> &nbsp;{user.email}</Item>
             {/* <Item>{user.gender}</Item> */}

@@ -100,7 +100,13 @@ const Layout1Topbar = () => {
 
   
   useEffect(() => {
-    setuserdata(user);
+    // setuserdata(user);
+    const token = localStorage.getItem('token');
+    axios.defaults.headers.common['Authorization'] = ` ${token}`;
+    axios.get('http://localhost:3000/api/profile')
+    .then((res) => {
+      setuserdata(res.data.data);
+    })
   },[user]);
 
  
