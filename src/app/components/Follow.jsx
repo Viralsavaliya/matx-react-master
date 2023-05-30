@@ -14,22 +14,28 @@ import { faTimesCircle } from '@fortawesome/free-regular-svg-icons';
 
 
 function Follow() {
+    const token = localStorage.getItem('token');
+    axios.defaults.headers.common['Authorization'] = ` ${token}`;
     const [user, setuser] = useState([]);
     const [request, setrequest] = useState([]);
     const alluser = () => {
+        setuser([])
+        console.log(user,"apii call before user");
         axios.get(`http://localhost:3000/api/follow/followuser`)
-            .then((response) => {
-                console.log(response.data.data);
-                const user = response.data.data;
-                setuser(user);
+        .then((response) => {
+            const user = response.data.data;
+            setuser(user);
+            console.log(user,"apii call after user");
             })
     }
     const allrequest = () => {
+        setrequest([])
+        console.log(request,"apii call before request");
         axios.get(`http://localhost:3000/api/follow/allrequestoneuser`)
-            .then((response) => {
-                console.log(response.data.data, "request");
-                const request = response.data.data;
-                setrequest(request);
+        .then((response) => {
+            const request = response.data.data;
+            setrequest(request);
+            console.log(request,"apii call after request");
             })
     }
     const rejectrequest = (row) => {
