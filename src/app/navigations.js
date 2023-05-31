@@ -1,5 +1,3 @@
-import Postcreate from "./components/Postcraete";
-import Profile from "./components/Profile";
 
 export const navigations = [
   { name: 'Dashboard', path: '/dashboard/default', icon: 'dashboard' },
@@ -18,16 +16,14 @@ export const navigations = [
   {
     name: 'Components',
     icon: 'favorite',
-    // badge: { value: '30+', color: 'secondary' },
     children: [
 
-      // {name:'profile', path:<Profile />},
-      // {name:'create post', path:<Postcreate />}
+   
       
-      { name: 'craete post', path: '/createpost', iconText: 'post' },
-      { name: 'All post', path: '/allpost', iconText: 'post' },
-      { name: 'Follow', path: '/follow', iconText: 'follow' },
-      // { name: 'Auto Complete', path: '/material/autocomplete', iconText: 'A' },
+      { name: 'craete post', path: '/createpost', icon: 'addtophotosicon' },
+      { name: 'All post', path: '/allpost', icon: 'vrpano' },
+      { name: 'Follow', path: '/follow', icon: 'personadd' },
+      { name: 'All User', path: '/alluser', icon: 'people' },
     ]
   }
 ];

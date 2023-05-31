@@ -13,7 +13,7 @@ import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
 import { faTimesCircle } from '@fortawesome/free-regular-svg-icons';
 
 
-function Follow() {
+function ViewAlluser() {
     const token = localStorage.getItem('token');
     axios.defaults.headers.common['Authorization'] = ` ${token}`;
     const [user, setuser] = useState([]);
@@ -26,32 +26,17 @@ function Follow() {
             setuser(user);
             })
     }
-    const allrequest = () => {
-        setrequest([])
-        axios.get(`http://localhost:3000/api/follow/allrequestoneuser`)
-        .then((response) => {
-            const request = response.data.data;
-            setrequest(request);
-            })
-    }
-    const rejectrequest = (row) => {
-        console.log(row, 'row');
-        axios.post(`http://localhost:3000/api/follow/rejectrequest?id=${row}`)
+  
+    const sendrequest = (id) => {
+        console.log(id);
+        axios.post(`http://localhost:3000/api/follow?followerId=${id}`)
             .then((response) => {
-                allrequest()
+                // console.log(response);
+                alluser()
             })
     }
-    const acceptrequest = (row) => {
-        console.log(row, 'row');
-        axios.post(`http://localhost:3000/api/follow/acceptrequest?id=${row}`)
-            .then((response) => {
-                allrequest()
-            })
-    }
-
     useEffect(() => {
         alluser();
-        allrequest()
     }, [])
 
     return (
@@ -59,27 +44,38 @@ function Follow() {
             <Container>
                 <Grid container>
                     <Grid xs={12} style={{ textAlign: "center" }}>
-                        <h1>View All Request</h1>
+                        <h1>View All User</h1>
                     </Grid>
                     <Grid xs={12} style={{ textAlign: "left" }}>
                         <Grid xs={6} md={12} style={{ border: "2px solid black" }}>
-                            {request?.map((data) => (
+                            {user?.map((data) => (
                                 <Grid xs={10} md={12} style={{ margin: "10px 0", display: "flex" }}>
                                     <Grid xs={8} md={10} key={data?.id} style={{ width: "90%" }}>
-                                        <img src={"http://localhost:3000/" + data?.userId?.image}
+                                        <img src={"http://localhost:3000/" + data?.image}
                                             style={{ objectFit: "cover", borderRadius: "50%", margin: " 10px 10px -15px 10px" }}
                                             sm={12}
                                             width="40"
                                             height="40"
                                             alt=""
                                             srcset="" />
-                                        {data?.userId?.userName}
+                                        {data?.userName}
                                     </Grid>
                                     <Grid xs={2} md={2} style={{ textAlign: "center" }}>
-                                        <div style={{ margin: "10px 0" }}>
-                                            <FontAwesomeIcon icon={faCheckCircle} onClick={() => acceptrequest(data?._id)} style={{ fontSize: "25px" }} />
-                                            <FontAwesomeIcon icon={faTimesCircle} onClick={() => rejectrequest(data?._id)} style={{ fontSize: "25px", marginLeft: "10px" }} />
-                                        </div>
+                                        <Button
+
+                                            onClick={() => data?.followStatus === null ? sendrequest(data?._id): null   }
+                                            style={{ textAlign: "right" }}
+                                            variant={data?.followStatus === 0 ? "outlined" : data?.followStatus === 1 ? "contained" : data?.followStatus === 2 ? "outlined" : "contained"}
+                                            color={data?.followStatus === 0 ? "secondary" : data?.followStatus === 1 ? "success" : data?.followStatus === 2 ? "error" : "primary"}
+                                        >
+                                            {data?.followStatus === 0
+                                                ? "Request"
+                                                : data?.followStatus === 1
+                                                    ? "Accepted"
+                                                    : data?.followStatus === 2
+                                                        ? "Rejected"
+                                                        : "Follow"}
+                                        </Button>
                                     </Grid>
                                 </Grid>
                             ))}
@@ -90,5 +86,4 @@ function Follow() {
         </div>
     )
 }
-
-export default Follow;
+export default ViewAlluser;
