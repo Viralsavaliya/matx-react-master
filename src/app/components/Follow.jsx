@@ -20,29 +20,24 @@ function Follow() {
     const [request, setrequest] = useState([]);
     const alluser = () => {
         setuser([])
-        console.log(user,"apii call before user");
         axios.get(`http://localhost:3000/api/follow/followuser`)
         .then((response) => {
             const user = response.data.data;
             setuser(user);
-            console.log(user,"apii call after user");
             })
     }
     const allrequest = () => {
         setrequest([])
-        console.log(request,"apii call before request");
         axios.get(`http://localhost:3000/api/follow/allrequestoneuser`)
         .then((response) => {
             const request = response.data.data;
             setrequest(request);
-            console.log(request,"apii call after request");
             })
     }
     const rejectrequest = (row) => {
         console.log(row, 'row');
         axios.post(`http://localhost:3000/api/follow/rejectrequest?id=${row}`)
             .then((response) => {
-                console.log(response);
                 allrequest()
             })
     }
@@ -50,7 +45,6 @@ function Follow() {
         console.log(row, 'row');
         axios.post(`http://localhost:3000/api/follow/acceptrequest?id=${row}`)
             .then((response) => {
-                console.log(response);
                 allrequest()
             })
     }
@@ -59,7 +53,7 @@ function Follow() {
         console.log(id);
         axios.post(`http://localhost:3000/api/follow?followerId=${id}`)
             .then((response) => {
-                console.log(response);
+                // console.log(response);
                 alluser()
             })
     }

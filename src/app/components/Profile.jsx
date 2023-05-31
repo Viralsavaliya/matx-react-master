@@ -109,7 +109,7 @@ function Profile() {
   const allfollowingshow = () => {
     const alldata = follow.followedUsers;
     console.log(alldata,"alldata");
-    navigate('/allfollowingshow',{state:alldata});
+    navigate('/allfollowingshow');
   }
 
   const getusers = () => {
