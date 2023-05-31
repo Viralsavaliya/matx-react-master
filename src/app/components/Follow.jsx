@@ -62,7 +62,7 @@ function Follow() {
                         <h1>View All Request</h1>
                     </Grid>
                     <Grid xs={12} style={{ textAlign: "left" }}>
-                        <Grid xs={6} md={12} style={{ border: "2px solid black" }}>
+                        <Grid xs={6} md={12} >
                             {request?.map((data) => (
                                 <Grid xs={10} md={12} style={{ margin: "10px 0", display: "flex" }}>
                                     <Grid xs={8} md={10} key={data?.id} style={{ width: "90%" }}>

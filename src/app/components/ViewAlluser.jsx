@@ -6,27 +6,25 @@ import {
     Grid,
     Container,
     Button,
-
+    TextField,
+    Avatar
 } from "@mui/material";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle } from '@fortawesome/free-regular-svg-icons';
-import { faTimesCircle } from '@fortawesome/free-regular-svg-icons';
-
+import PersonIcon from '@mui/icons-material/Person';
 
 function ViewAlluser() {
     const token = localStorage.getItem('token');
     axios.defaults.headers.common['Authorization'] = ` ${token}`;
     const [user, setuser] = useState([]);
-    const [request, setrequest] = useState([]);
+    const [search, setsearch] = useState([]);
     const alluser = () => {
         setuser([])
-        axios.get(`http://localhost:3000/api/follow/followuser`)
-        .then((response) => {
-            const user = response.data.data;
-            setuser(user);
+        axios.get(`http://localhost:3000/api/follow/followuser/?search=${search}`)
+            .then((response) => {
+                const user = response.data.data;
+                setuser(user);
             })
     }
-  
+
     const sendrequest = (id) => {
         console.log(id);
         axios.post(`http://localhost:3000/api/follow?followerId=${id}`)
@@ -37,7 +35,7 @@ function ViewAlluser() {
     }
     useEffect(() => {
         alluser();
-    }, [])
+    }, [search])
 
     return (
         <div>
@@ -46,24 +44,35 @@ function ViewAlluser() {
                     <Grid xs={12} style={{ textAlign: "center" }}>
                         <h1>View All User</h1>
                     </Grid>
+                    <Grid item xs={11} md={12} style={{ textAlign: "end" }} >
+                        <TextField
+                            style={{ margin: "10px 0 10px 0px", width:"20%" , alignItems: "right" }}
+                            fullWidth
+                            variant="outlined"
+                            label="Search"
+                            value={search}
+                            onChange={(e) => setsearch(e.target.value)}
+                        />
+
+                    </Grid>
                     <Grid xs={12} style={{ textAlign: "left" }}>
-                        <Grid xs={6} md={12} style={{ border: "2px solid black" }}>
+                        <Grid xs={6} md={12} >
                             {user?.map((data) => (
                                 <Grid xs={10} md={12} style={{ margin: "10px 0", display: "flex" }}>
-                                    <Grid xs={8} md={10} key={data?.id} style={{ width: "90%" }}>
-                                        <img src={"http://localhost:3000/" + data?.image}
-                                            style={{ objectFit: "cover", borderRadius: "50%", margin: " 10px 10px -15px 10px" }}
+                                    <Grid xs={8} md={10} key={data?.id} style={{ width: "90%" , display:"flex" }}>
+                                    <Avatar
+                                            alt={data.userName}
+                                            src={data.image ? `http://localhost:3000/${data?.image}` : <PersonIcon />}
+                                            style={{ objectFit: "cover", borderRadius: "50%", margin: "3px 10px 15px 10px" }}
                                             sm={12}
                                             width="40"
                                             height="40"
-                                            alt=""
-                                            srcset="" />
-                                        {data?.userName}
+                                        /><p>{data?.userName}</p>
                                     </Grid>
                                     <Grid xs={2} md={2} style={{ textAlign: "center" }}>
                                         <Button
 
-                                            onClick={() => data?.followStatus === null ? sendrequest(data?._id): null   }
+                                            onClick={() => data?.followStatus === null ? sendrequest(data?._id) : null}
                                             style={{ textAlign: "right" }}
                                             variant={data?.followStatus === 0 ? "outlined" : data?.followStatus === 1 ? "contained" : data?.followStatus === 2 ? "outlined" : "contained"}
                                             color={data?.followStatus === 0 ? "secondary" : data?.followStatus === 1 ? "success" : data?.followStatus === 2 ? "error" : "primary"}
