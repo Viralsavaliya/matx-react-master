@@ -31,7 +31,6 @@ function ViewAllPost() {
       const response = await axios.get(
         `http://localhost:3000/api/post?page=${currPage}`
       );
-      console.log(response.data.data, "<<<");
       setPost(response.data.data)
       if (!response.data.pagination.totalPosts) {
         setLastList(true);

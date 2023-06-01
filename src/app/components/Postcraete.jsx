@@ -55,9 +55,9 @@ const validationSchema = yup.object({
   // .required("category is Required"),
 });
 
-const editorStyle = {
-  height: '300px', // Set the desired height here
-};
+// const editorStyle = {
+//   height: '300px', // Set the desired height here
+// };
 
 function Postcreate() {
   const [page, setPage] = useState(0);
@@ -74,6 +74,9 @@ function Postcreate() {
   const [con, setcon] = useState();
   const [isChecked, setIsChecked] = useState(false);
 
+  const editorStyle = {
+    height: '300px'
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -307,17 +310,20 @@ function Postcreate() {
                         helperText={formik.touched.title && formik.errors.title}
                       />
                     </Grid>
-                    <Grid xs={6} mb={1}>
+                    <Grid xs={6} mb={1} >
                       <CKEditor
                         editor={ClassicEditor}
                         data={con}
-                        style={{ height: "300px" }}
                         // style={editorStyle} 
+                        // config={{
+                        //   height: '250px',
+                        // }}
+                        editorStyle={editorStyle}
                         onReady={(editor) => {
                           // editor.config.height = '300px'; 
                           console.log('Editor is ready to use!', editor);
                         }}
-                        onChange={(event, editor) => {
+                        onChange={(event, editor) => { 
                           const data = editor.getData();
                           console.log("data", { data });
                           setcon(data);
@@ -325,7 +331,7 @@ function Postcreate() {
                         onBlur={(event, editor) => {
                           // console.log( 'Blur.', editor );
                         }}
-                        onFocus={(event, editor) => {
+                        onFocus={(event, editor) => { 
                           // console.log( 'Focus.', editor );
                         }}
                       />
