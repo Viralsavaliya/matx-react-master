@@ -6,21 +6,13 @@ import {
   Button,
   Grid,
   Container,
-  TextField,
-  styled,
-  Paper,
-  Input
+  TextField
 } from "@mui/material";
 
 import axios from "axios";
-import jwt_decode from "jwt-decode";
 
-import { useFormik } from "formik";
-import { enqueueSnackbar } from "notistack";
 import React, { useEffect, useState, useRef } from "react";
 import { useMutation } from "react-query";
-import * as yup from "yup";
-import { useLocation, useNavigate } from "react-router-dom";
 
 function ViewAllPost() {
   const [post, setPost] = useState([]);
@@ -30,7 +22,6 @@ function ViewAllPost() {
   const [prevPage, setPrevPage] = useState(0);
   const [userList, setUserList] = useState([]);
   const [lastList, setLastList] = useState(false);
-  const [showComments, setShowComments] = useState(false);
 
 
   const listInnerRef = useRef();
