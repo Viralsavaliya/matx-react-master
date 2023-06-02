@@ -24,6 +24,7 @@ export const navigations = [
       { name: 'All post', path: '/allpost', icon: 'vrpano' },
       { name: 'Follow', path: '/follow', icon: 'personadd' },
       { name: 'All User', path: '/alluser', icon: 'people' },
+      { name: 'Chat', path: '/chat', icon: 'chat' },
     ]
   }
 ];

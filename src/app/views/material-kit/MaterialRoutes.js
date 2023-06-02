@@ -5,6 +5,7 @@ import ViewAllPost from 'app/components/ViewAllPost';
 import Follow from 'app/components/Follow';
 import AllFollowingshow from 'app/components/AllFollowingshow';
 import ViewAlluser from 'app/components/ViewAlluser';
+import Messages from 'app/components/Message';
 
 
 
@@ -14,6 +15,7 @@ const materialRoutes = [
   { path: "/follow", element: <Follow /> }, 
   { path: "/allfollowingshow", element: <AllFollowingshow /> }, 
   { path: "/alluser", element: <ViewAlluser /> }, 
+  { path: "/chat", element: <Messages /> }, 
 
 ];
 
