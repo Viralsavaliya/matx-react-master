@@ -1,6 +1,8 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
+import InputAdornment from '@mui/material/InputAdornment';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import {
     Container,
     Grid,
@@ -8,10 +10,9 @@ import {
     TextField,
     Button,
     Modal,
-    Backdrop,
     Fade
 } from "@mui/material";
-
+import { enqueueSnackbar } from "notistack";
 import PersonIcon from '@mui/icons-material/Person';
 
 
@@ -29,27 +30,59 @@ function Message() {
     const [Message, setMessage] = useState([]);
     const [open, setOpen] = useState(false);
     const [popupImage, setPopupImage] = useState('');
+    const [file, setFile] = useState('');
+    const [image, setImage] = useState('');
+    const fileInputRef = useRef(null);
 
     const token = localStorage.getItem('token');
     axios.defaults.headers.common['Authorization'] = ` ${token}`;
 
+    const handleButtonClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = async (event) => {
+        const selectedFile = event.target.files[0];
+        console.log(selectedFile.name, "selectedFile");
+        setFile(selectedFile)
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        await axios
+            .post(`http://localhost:3000/api/message/imageupload`, formData)
+            .then((res) => {
+                if ({ res: true }) {
+                    console.log(res.data.data, "res");
+                    setImage(res.data.data)
+                    console.log(res.data.data, "res.data.data");
+                    enqueueSnackbar(
+                        "Post add Successfully",
+                        { variant: "success" },
+                        { autoHideDuration: 1000 }
+                    );
+                }
+            })
+    };
+
     useEffect(() => {
         if (loginuser._id) {
-            console.log(loginuser._id, "loginuser._id");
             setUserId(loginuser._id)
         }
     }, [loginuser])
     const sendmessage = () => {
-
         const newMessage = {
             senderId: userId,
             receiverId: selectuser._id,
-            message: messages,
+            message: image ? image : messages,
             name: selectuser.userName
         };
+        console.log(newMessage, "newMessage");
         socket.emit("send_message", newMessage);
         setAllmessage((prevMessages) => [...prevMessages, newMessage]);
         setMessages("");
+        setFile("")
+        setImage("")
     }
     useEffect(() => {
         const socket = io('http://localhost:3000', {
@@ -68,14 +101,11 @@ function Message() {
         socket.emit('join', {
             userId: userId
         })
-
         socket.on("recive_message", (data) => {
             console.log(data, "reciver_data");
             setMessage(data?.message);
-            // setAllmessage((prevMessages) => [...prevMessages, data?.message]);
 
         })
-
         alluser()
     }, [userId])
     useEffect(() => {
@@ -94,8 +124,6 @@ function Message() {
     useEffect(() => {
         setAllmessage([""]);
     }, [selectuser])
-
-
     const alluser = () => {
         axios.get(`http://localhost:3000/api/message/chatpage`)
             .then((response) => {
@@ -108,13 +136,13 @@ function Message() {
     const messageuser = (row) => {
         setselectuser(row);
     }
-
     const handleAvatarClick = (imageUrl) => {
         setPopupImage(imageUrl);
         setOpen(true);
     };
 
-    
+
+
     return (
         <div>
             <Container style={{ border: "2px solid black", padding: "2px" }}>
@@ -127,7 +155,7 @@ function Message() {
                             <Avatar
                                 alt={loginuser?.userName}
                                 src={loginuser?.image ? `http://localhost:3000/${loginuser?.image}` : <PersonIcon />}
-                                style={{ objectFit: "cover", borderRadius: "50%" }}
+                                style={{ objectFit: "cover", borderRadius: "50%", cursor: "pointer" }}
                                 width="40"
                                 height="40"
                                 onClick={() => handleAvatarClick(loginuser?.image)}
@@ -142,7 +170,7 @@ function Message() {
                                 md={10}
                                 key={user?.id}
                                 onClick={() => messageuser(user)}
-                                style={{ width: "90%", display: "flex" }}>
+                                style={{ width: "90%", display: "flex", cursor: "pointer" }}>
                                 <Avatar
                                     alt={user?.userName}
                                     src={user?.image ? `http://localhost:3000/${user?.image}` : <PersonIcon />}
@@ -151,7 +179,7 @@ function Message() {
                                     width="40"
                                     height="40"
                                     onClick={() => handleAvatarClick(user?.image)}
-                                /><p>{user?.userName}</p>
+                                /><p >{user?.userName}</p>
                             </Grid>
                         ))}
                     </Grid>
@@ -163,11 +191,11 @@ function Message() {
                             <Avatar
                                 alt={selectuser?.userName}
                                 src={selectuser?.image ? `http://localhost:3000/${selectuser?.image}` : <PersonIcon />}
-                                style={{ objectFit: "cover", borderRadius: "50%" }}
+                                style={{ objectFit: "cover", borderRadius: "50%", cursor: "pointer" }}
                                 width="40"
                                 height="40"
                                 onClick={() => handleAvatarClick(selectuser?.image)}
-                            /><p style={{ margin: "10px 15px" }}>{selectuser?.userName}</p>
+                            /><p style={{ margin: "10px 15px" }}><b>{selectuser?.userName}</b></p>
                         </Grid>
                         <Modal
                             open={open}
@@ -187,14 +215,68 @@ function Message() {
                         <Grid xs={12} md={12} style={{ height: "70vh", overflowY: 'auto' }}>
                             {allmessage?.map((message) => {
                                 if (message?.senderId === userId && message?.receiverId === selectuser?._id) {
-                                    return <p style={{ textAlign: "right" }}>{message?.message}</p>;
+                                    if (message?.message?.startsWith("image")) {
+                                        return (
+                                            <img
+                                                src={`http://localhost:3000/chat/${message?.message}`}
+                                                alt="Message Image"
+                                                style={{ textAlign: "right", width: "50%", height: "300px", objectFit: "cover", margin: "0 0 0 330px" }}
+                                            />
+                                        );
+                                    } else if (message?.message?.startsWith("video")) {
+                                        return (
+                                            <video
+                                                src={`http://localhost:3000/chat/${message?.message}`}
+                                                alt="Message Image"
+                                                style={{ width: "50%", height: "300px", objectFit: "cover" , margin: "0 0 0 330px" }}
+                                            />
+                                        );
+                                    } else {
+                                        return <p style={{ textAlign: "right" }}>{message?.message}</p>;
+                                    }
                                 }
                                 if (message?.senderId === selectuser?._id && message?.receiverId === userId) {
-                                    return <p style={{ textAlign: "left" }}>{message?.message}</p>;
+                                    if (message?.message?.startsWith("image")) {
+                                        return (
+                                            <img
+                                                src={`http://localhost:3000/chat/${message?.message}`}
+                                                alt="Message Image"
+                                                style={{ width: "50%", height: "300px", objectFit: "cover" }}
+                                            />
+                                        );
+                                    } else if (message?.message?.startsWith("video")) {
+                                        return (
+                                            <video
+                                                src={`http://localhost:3000/chat/${message?.message}`}
+                                                alt="Message Image"
+                                                style={{ width: "50%", height: "300px", objectFit: "cover" }}
+                                            />
+                                        );
+                                    }
+                                    else {
+                                        return <p style={{ textAlign: "left" }}>{message?.message}</p>;
+                                    }
                                 }
                                 return null;
                             })}
-                            <p style={{ textAlign: "left" }}>{Message}</p>
+                            {
+                                String(Message)?.startsWith("image") ? (
+                                    <img
+                                        src={`http://localhost:3000/chat/${Message}`}
+                                        alt="Message Image"
+                                        style={{ width: "50%", height: "300px", objectFit: "cover" }}
+                                    />
+                                ) : String(Message)?.startsWith("video") ? (
+                                    <video
+                                        src={`http://localhost:3000/chat/${Message}`}
+                                        alt="Message Video"
+                                        style={{ width: "50%", height: "300px", objectFit: "cover" }}
+                                    />
+                                ) : (
+                                    <p style={{ textAlign: "left" }}>{Message}</p>
+                                )
+                            }
+
                         </Grid>
                         <Grid container xs={12} md={12}>
                             <Grid xs={12} md={11}>
@@ -203,7 +285,21 @@ function Message() {
                                     type="text"
                                     value={messages}
                                     placeholder='Your message'
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <FileUploadIcon onClick={handleButtonClick} style={{ cursor: "pointer" }} />
+                                            </InputAdornment>
+                                        ),
+                                    }}
                                     onChange={(e) => setMessages(e.target.value)}
+                                />
+                                <input
+                                    type="file"
+                                    style={{ display: 'none' }}
+                                    ref={fileInputRef}
+                                    onChange={handleFileChange}
+
                                 />
                             </Grid>
                             <Grid xs={12} md={1}>
