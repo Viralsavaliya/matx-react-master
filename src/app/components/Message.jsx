@@ -34,6 +34,8 @@ function Message() {
     const [image, setImage] = useState('');
     const fileInputRef = useRef(null);
 
+
+
     const token = localStorage.getItem('token');
     axios.defaults.headers.common['Authorization'] = ` ${token}`;
 
@@ -43,7 +45,7 @@ function Message() {
 
     const handleFileChange = async (event) => {
         const selectedFile = event.target.files[0];
-        console.log(selectedFile.name, "selectedFile");
+        // console.log(selectedFile.name, "selectedFile");
         setFile(selectedFile)
 
         const formData = new FormData();
@@ -53,9 +55,9 @@ function Message() {
             .post(`http://localhost:3000/api/message/imageupload`, formData)
             .then((res) => {
                 if ({ res: true }) {
-                    console.log(res.data.data, "res");
-                    setImage(res.data.data)
-                    console.log(res.data.data, "res.data.data");
+                    // console.log(res.data.data, "res");
+                        setImage(res.data.data)
+                    // console.log(res.data.data, "res.data.data");
                     enqueueSnackbar(
                         "Post add Successfully",
                         { variant: "success" },
@@ -75,11 +77,13 @@ function Message() {
             senderId: userId,
             receiverId: selectuser._id,
             message: image ? image : messages,
-            name: selectuser.userName
+            name: selectuser.userName,
+            time: new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric" })
         };
-        console.log(newMessage, "newMessage");
         socket.emit("send_message", newMessage);
         setAllmessage((prevMessages) => [...prevMessages, newMessage]);
+        // console.log(newMessage, "newMessage");
+
         setMessages("");
         setFile("")
         setImage("")
@@ -102,8 +106,8 @@ function Message() {
             userId: userId
         })
         socket.on("recive_message", (data) => {
-            console.log(data, "reciver_data");
-            setMessage(data?.message);
+            // console.log(data, "reciver_data");
+            setMessage(data);
 
         })
         alluser()
@@ -116,6 +120,7 @@ function Message() {
                 receiverId: selectuser._id
             })
             socket.on("allMessages", (data) => {
+                // console.log(data, "data");
                 setAllmessage(data)
             })
         }
@@ -213,69 +218,113 @@ function Message() {
                             </Fade>
                         </Modal>
                         <Grid xs={12} md={12} style={{ height: "70vh", overflowY: 'auto' }}>
+                        
                             {allmessage?.map((message) => {
-                                if (message?.senderId === userId && message?.receiverId === selectuser?._id) {
+                                let time
+                                const createdAt = new Date(message.createdAt);
+                                
+                                if(message.time){
+                                    time = message.time
+                                }else{
+                                    time = createdAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric" });
+                                }
+                               
+
+                            if (message?.senderId === userId && message?.receiverId === selectuser?._id) {
                                     if (message?.message?.startsWith("image")) {
                                         return (
-                                            <img
-                                                src={`http://localhost:3000/chat/${message?.message}`}
-                                                alt="Message Image"
-                                                style={{ textAlign: "right", width: "50%", height: "300px", objectFit: "cover", margin: "0 0 0 330px" }}
-                                            />
-                                        );
+                            <div>
+                                <img
+                                    src={`http://localhost:3000/chat/${message?.message}`}
+                                    alt="Message Image"
+                                    style={{ textAlign: "right", width: "50%", height: "300px", objectFit: "cover", margin: "0 0 0 330px" }}
+                                />
+                                <p style={{ textAlign: "right", fontSize:"12px"   }}>{time}</p>
+                            </div>
+                            );
                                     } else if (message?.message?.startsWith("video")) {
                                         return (
-                                            <video
-                                                src={`http://localhost:3000/chat/${message?.message}`}
-                                                alt="Message Image"
-                                                style={{ width: "50%", height: "300px", objectFit: "cover" , margin: "0 0 0 330px" }}
-                                            />
-                                        );
+                            <div>
+                                <video
+                                    src={`http://localhost:3000/chat/${message?.message}`}
+                                    alt="Message Image"
+                                    style={{ width: "50%", height: "300px", objectFit: "cover", margin: "0 0 0 330px" }}
+                                />
+                                <p style={{ textAlign: "right", fontSize:"12px"   }}>{time}</p>
+                            </div>
+                            );
                                     } else {
-                                        return <p style={{ textAlign: "right" }}>{message?.message}</p>;
+                                        return (
+                            <div>
+                                <p style={{ textAlign: "right", marginRight:"5px" }}>{message?.message}</p>
+                                <p style={{ textAlign: "right" , fontSize:"12px"  }}>{time}</p>
+                            </div>
+                            );
                                     }
                                 }
-                                if (message?.senderId === selectuser?._id && message?.receiverId === userId) {
+
+                            if (message?.senderId === selectuser?._id && message?.receiverId === userId) {
                                     if (message?.message?.startsWith("image")) {
                                         return (
-                                            <img
-                                                src={`http://localhost:3000/chat/${message?.message}`}
-                                                alt="Message Image"
-                                                style={{ width: "50%", height: "300px", objectFit: "cover" }}
-                                            />
-                                        );
+                            <div>
+                                <img
+                                    src={`http://localhost:3000/chat/${message?.message}`}
+                                    alt="Message Image"
+                                    style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft:"5px" }}
+                                />
+                                <p style={{ textAlign: "left", fontSize:"12px"   }}>{time}</p>
+                            </div>
+                            );
                                     } else if (message?.message?.startsWith("video")) {
                                         return (
-                                            <video
-                                                src={`http://localhost:3000/chat/${message?.message}`}
-                                                alt="Message Image"
-                                                style={{ width: "50%", height: "300px", objectFit: "cover" }}
-                                            />
-                                        );
-                                    }
-                                    else {
-                                        return <p style={{ textAlign: "left" }}>{message?.message}</p>;
+                            <div>
+                                <video
+                                    src={`http://localhost:3000/chat/${message?.message}`}
+                                    alt="Message Image"
+                                    style={{ width: "50%", height: "300px", objectFit: "cover" , marginLeft:"5px"}}
+                                />
+                                <p style={{ textAlign: "left", fontSize:"12px"   }}>{time}</p>
+                            </div>
+                            );
+                                    } else {
+                                        return (
+                            <div>
+                                <p style={{ textAlign: "left" , marginLeft:"5px"}}>{message?.message}</p>
+                                <p style={{ textAlign: "left", fontSize:"12px"   }}>{time}</p>
+                            </div>
+                            );
                                     }
                                 }
-                                return null;
+
+                            return null;
                             })}
-                            {
-                                String(Message)?.startsWith("image") ? (
+
+
+                            {String(Message.message)?.startsWith("image") ? (
+
+                                <div>
                                     <img
-                                        src={`http://localhost:3000/chat/${Message}`}
+                                        src={`http://localhost:3000/chat/${Message.message}`}
                                         alt="Message Image"
-                                        style={{ width: "50%", height: "300px", objectFit: "cover" }}
+                                        style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft:"5px" }}
                                     />
-                                ) : String(Message)?.startsWith("video") ? (
+                                    <p style={{ textAlign: "left", fontSize:"12px"   }}>{Message.time}</p>
+                                </div>
+                            ) : String(Message.message)?.startsWith("video") ? (
+                                <div>
                                     <video
-                                        src={`http://localhost:3000/chat/${Message}`}
+                                        src={`http://localhost:3000/chat/${Message.message}`}
                                         alt="Message Video"
-                                        style={{ width: "50%", height: "300px", objectFit: "cover" }}
+                                        style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft:"5px" }}
                                     />
-                                ) : (
-                                    <p style={{ textAlign: "left" }}>{Message}</p>
-                                )
-                            }
+                                    <p style={{ textAlign: "left",  fontSize:"12px"   }}>{Message.time}</p>
+                                </div>
+                            ) : (
+                                <div>
+                                    <p style={{ textAlign: "left", marginLeft:"5px" }}>{Message.message}</p>
+                                    <p style={{ textAlign: "left" , fontSize:"12px"  }}>{Message.time}</p>
+                                </div>
+                            )}
 
                         </Grid>
                         <Grid container xs={12} md={12}>
@@ -283,8 +332,8 @@ function Message() {
                                 <TextField
                                     fullWidth
                                     type="text"
-                                    value={messages}
-                                    placeholder='Your message'
+                                    value={image ? image : messages}
+                                    placeholder={'Your message'}
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
