@@ -223,9 +223,27 @@ function Message() {
                         </Modal>
                         <Grid xs={12} md={12} style={{ height: "70vh", overflowY: 'auto' }}>
 
-                            {allmessage?.map((message) => {
+                            {allmessage?.map((message,index) => {
 
-                             
+                                const isSameDay = (date1, date2) => {
+                                    const d1 = new Date(date1);
+                                    const d2 = new Date(date2);
+                                    return (
+                                        d1.getFullYear() === d2.getFullYear() &&
+                                        d1.getMonth() === d2.getMonth() &&
+                                        d1.getDate() === d2.getDate()
+                                    );
+                                };
+
+                                const formatDate = (date) => {
+                                    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                                    return new Date(date).toLocaleDateString(undefined, options);
+                                };
+
+                                const previousMessage = allmessage[index - 1];
+                                const previousDate = previousMessage?.createdAt;
+                                const currentDate = message?.createdAt;
+                                const showDaySeparator = previousDate && !isSameDay(previousDate, currentDate);
 
 
                                 let time;
@@ -238,6 +256,14 @@ function Message() {
                                 }
 
                                 if (message?.senderId === userId && message?.receiverId === selectuser?._id) {
+                                    {
+                                        if (showDaySeparator) {
+                                            return (<p style={{ textAlign: 'center', marginTop: '10px', color: 'gray' }}>
+                                                {formatDate(currentDate)}
+                                            </p>
+                                            )
+                                        }
+                                    }
                                     if (message?.message?.startsWith("image")) {
                                         return (
                                             <div style={{ width: "100%", textAlign: "end" }}>
@@ -316,6 +342,14 @@ function Message() {
                                 }
 
                                 if (message?.senderId === selectuser?._id && message?.receiverId === userId) {
+                                    {
+                                        if (showDaySeparator) {
+                                            return (<p style={{ textAlign: 'center', marginTop: '10px', color: 'gray' }}>
+                                                {formatDate(currentDate)}
+                                            </p>
+                                            )
+                                        }
+                                    }
                                     if (message?.message?.startsWith("image")) {
                                         return (
                                             <div>
