@@ -3,6 +3,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
 import InputAdornment from '@mui/material/InputAdornment';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileWord } from '@fortawesome/free-solid-svg-icons';
+import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import { faFilePowerpoint } from '@fortawesome/free-solid-svg-icons';
 import {
     Container,
     Grid,
@@ -56,7 +60,7 @@ function Message() {
             .then((res) => {
                 if ({ res: true }) {
                     // console.log(res.data.data, "res");
-                        setImage(res.data.data)
+                    setImage(res.data.data)
                     // console.log(res.data.data, "res.data.data");
                     enqueueSnackbar(
                         "Post add Successfully",
@@ -218,111 +222,246 @@ function Message() {
                             </Fade>
                         </Modal>
                         <Grid xs={12} md={12} style={{ height: "70vh", overflowY: 'auto' }}>
-                        
+
                             {allmessage?.map((message) => {
-                                let time
+
+                             
+
+
+                                let time;
                                 const createdAt = new Date(message.createdAt);
-                                
-                                if(message.time){
-                                    time = message.time
-                                }else{
+
+                                if (message.time) {
+                                    time = message.time;
+                                } else {
                                     time = createdAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "numeric" });
                                 }
-                               
 
-                            if (message?.senderId === userId && message?.receiverId === selectuser?._id) {
+                                if (message?.senderId === userId && message?.receiverId === selectuser?._id) {
                                     if (message?.message?.startsWith("image")) {
                                         return (
-                            <div>
-                                <img
-                                    src={`http://localhost:3000/chat/${message?.message}`}
-                                    alt="Message Image"
-                                    style={{ textAlign: "right", width: "50%", height: "300px", objectFit: "cover", margin: "0 0 0 330px" }}
-                                />
-                                <p style={{ textAlign: "right", fontSize:"12px"   }}>{time}</p>
-                            </div>
-                            );
+                                            <div style={{ width: "100%", textAlign: "end" }}>
+                                                <img
+                                                    src={`http://localhost:3000/chat/${message?.message}`}
+                                                    alt="Message Image"
+                                                    style={{ textAlign: "end", width: "50%", height: "300px", objectFit: "cover" }}
+                                                />
+                                                <p style={{ textAlign: "end", fontSize: "12px", margin: "-5px 0 0 0" }}>{message.message}</p>
+                                                <p style={{ textAlign: "end", fontSize: "12px" }}>{time}</p>
+                                            </div>
+                                        );
                                     } else if (message?.message?.startsWith("video")) {
                                         return (
-                            <div>
-                                <video
-                                    src={`http://localhost:3000/chat/${message?.message}`}
-                                    alt="Message Image"
-                                    style={{ width: "50%", height: "300px", objectFit: "cover", margin: "0 0 0 330px" }}
-                                />
-                                <p style={{ textAlign: "right", fontSize:"12px"   }}>{time}</p>
-                            </div>
-                            );
+                                            <div style={{ width: "100%", textAlign: "end" }}>
+                                                <video
+                                                    src={`http://localhost:3000/chat/${message?.message}`}
+                                                    alt="Message Video"
+                                                    style={{ width: "50%", height: "300px", objectFit: "cover" }}
+                                                />
+                                                <p style={{ textAlign: "end", fontSize: "12px", margin: "-5px 0 0 0" }}>{message.message}</p>
+                                                <p style={{ textAlign: "end", fontSize: "12px" }}>{time}</p>
+                                            </div>
+                                        );
+                                    } else if (message?.message?.startsWith("file")) {
+                                        const fileExtension = message?.message.split(".").pop();
+                                        if (fileExtension === "pdf") {
+                                            return (
+                                                <div style={{ width: "100%", textAlign: "end" }}>
+                                                    <a
+                                                        href={`http://localhost:3000/chat/${message?.message}`}
+                                                        target="_blank"
+                                                    >
+                                                        <FontAwesomeIcon icon={faFilePdf} style={{ fontSize: "90px", color: "red" }} />
+                                                    </a>
+                                                    <p style={{ textAlign: "end", fontSize: "12px", margin: "-2px 0 0 0" }}>{message.message}</p>
+                                                    <p style={{ textAlign: "end", fontSize: "12px" }}>{time}</p>
+                                                </div>
+                                            );
+                                        } else if (fileExtension === "ppt" || fileExtension === "pptx") {
+                                            return (
+                                                <div style={{ width: "100%", textAlign: "end" }}>
+                                                    <a
+                                                        href={`http://localhost:3000/chat/${message?.message}`}
+                                                        target="_blank"
+                                                    >
+                                                        <FontAwesomeIcon icon={faFilePowerpoint} style={{ fontSize: "90px", color: "blue" }} />
+                                                    </a>
+                                                    <p style={{ textAlign: "end", fontSize: "12px", margin: "-2px 0 0 0" }}>{message.message}</p>
+                                                    <p style={{ textAlign: "end", fontSize: "12px" }}>{time}</p>
+                                                </div>
+                                            );
+                                        }
+                                        else if (fileExtension === "doc" || fileExtension === "docx") {
+                                            return (
+                                                <div style={{ width: "100%", textAlign: "end" }}>
+                                                    <a
+                                                        href={`http://localhost:3000/chat/${message?.message}`}
+                                                        target="_blank"
+                                                    >
+                                                        <FontAwesomeIcon icon={faFileWord} style={{ fontSize: "90px", color: "blue" }} />
+                                                    </a>
+                                                    <p style={{ textAlign: "end", fontSize: "12px", margin: "-2px 0 0 0" }}>{message.message}</p>
+                                                    <p style={{ textAlign: "end", fontSize: "12px", objectFit: "contain" }}>{time}</p>
+                                                </div>
+                                            );
+                                        }
                                     } else {
                                         return (
-                            <div>
-                                <p style={{ textAlign: "right", marginRight:"5px" }}>{message?.message}</p>
-                                <p style={{ textAlign: "right" , fontSize:"12px"  }}>{time}</p>
-                            </div>
-                            );
+                                            <div>
+                                                <p style={{ textAlign: "end", marginRight: "5px" }}>{message?.message}</p>
+                                                <p style={{ textAlign: "end", fontSize: "12px" }}>{time}</p>
+                                            </div>
+                                        );
                                     }
                                 }
 
-                            if (message?.senderId === selectuser?._id && message?.receiverId === userId) {
+                                if (message?.senderId === selectuser?._id && message?.receiverId === userId) {
                                     if (message?.message?.startsWith("image")) {
                                         return (
-                            <div>
-                                <img
-                                    src={`http://localhost:3000/chat/${message?.message}`}
-                                    alt="Message Image"
-                                    style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft:"5px" }}
-                                />
-                                <p style={{ textAlign: "left", fontSize:"12px"   }}>{time}</p>
-                            </div>
-                            );
+                                            <div>
+                                                <img
+                                                    src={`http://localhost:3000/chat/${message?.message}`}
+                                                    alt="Message Image"
+                                                    style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft: "5px" }}
+                                                />
+                                                <p style={{ textAlign: "left", fontSize: "12px" }}>{time}</p>
+                                            </div>
+                                        );
                                     } else if (message?.message?.startsWith("video")) {
                                         return (
-                            <div>
-                                <video
-                                    src={`http://localhost:3000/chat/${message?.message}`}
-                                    alt="Message Image"
-                                    style={{ width: "50%", height: "300px", objectFit: "cover" , marginLeft:"5px"}}
-                                />
-                                <p style={{ textAlign: "left", fontSize:"12px"   }}>{time}</p>
-                            </div>
-                            );
+                                            <div>
+                                                <video
+                                                    src={`http://localhost:3000/chat/${message?.message}`}
+                                                    alt="Message Video"
+                                                    style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft: "5px" }}
+                                                />
+                                                <p style={{ textAlign: "left", fontSize: "12px" }}>{time}</p>
+                                            </div>
+                                        );
+                                    } else if (message?.message?.startsWith("file")) {
+                                        const fileExtension = message?.message.split(".").pop();
+                                        if (fileExtension === "pdf") {
+                                            return (
+                                                <div>
+                                                    <a
+                                                        href={`http://localhost:3000/chat/${message?.message}`}
+                                                        target="_blank"
+                                                    >
+                                                        <FontAwesomeIcon icon={faFilePdf} style={{ fontSize: "90px", color: "red" }} />
+                                                    </a>
+                                                    <p style={{ textAlign: "left", fontSize: "12px", margin: "-2px 0 0 0" }}>{message.message}</p>
+                                                    <p style={{ textAlign: "left", fontSize: "12px" }}>{time}</p>
+                                                </div>
+                                            );
+                                        } else if (fileExtension === "ppt" || fileExtension === "pptx") {
+                                            return (
+                                                <div>
+                                                    <a
+                                                        href={`http://localhost:3000/chat/${message?.message}`}
+                                                        target="_blank"
+                                                    >
+                                                        <FontAwesomeIcon icon={faFilePowerpoint} style={{ fontSize: "90px", color: "blue" }} />
+                                                    </a>
+                                                    <p style={{ textAlign: "left", fontSize: "12px", margin: "-2px 0 0 0" }}>{message.message}</p>
+                                                    <p style={{ textAlign: "left", fontSize: "12px" }}>{time}</p>
+                                                </div>
+                                            );
+                                        }
+                                        else if (fileExtension === "doc" || fileExtension === "docx") {
+                                            return (
+                                                <div >
+                                                    <a
+                                                        href={`http://localhost:3000/chat/${message?.message}`}
+                                                        target="_blank"
+                                                    >
+                                                        <FontAwesomeIcon icon={faFileWord} style={{ fontSize: "90px", color: "blue" }} />
+                                                    </a>
+                                                    <p style={{ textAlign: "left", fontSize: "12px", margin: "-2px 0 0 0" }}>{message.message}</p>
+                                                    <p style={{ textAlign: "left", fontSize: "12px", objectFit: "contain" }}>{time}</p>
+                                                </div>
+                                            );
+                                        }
                                     } else {
                                         return (
-                            <div>
-                                <p style={{ textAlign: "left" , marginLeft:"5px"}}>{message?.message}</p>
-                                <p style={{ textAlign: "left", fontSize:"12px"   }}>{time}</p>
-                            </div>
-                            );
+                                            <div>
+                                                <p style={{ textAlign: "left", marginLeft: "5px" }}>{message?.message}</p>
+                                                <p style={{ textAlign: "left", fontSize: "12px" }}>{time}</p>
+                                            </div>
+                                        );
                                     }
                                 }
 
-                            return null;
+                                return null;
                             })}
+
 
 
                             {String(Message.message)?.startsWith("image") ? (
 
                                 <div>
                                     <img
-                                        src={`http://localhost:3000/chat/${Message.message}`}
+                                        src={`http://localhost:3000/chat/${Message?.message}`}
                                         alt="Message Image"
-                                        style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft:"5px" }}
+                                        style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft: "5px" }}
                                     />
-                                    <p style={{ textAlign: "left", fontSize:"12px"   }}>{Message.time}</p>
+                                    <p style={{ textAlign: "left", fontSize: "12px" }}>{Message?.time}</p>
                                 </div>
                             ) : String(Message.message)?.startsWith("video") ? (
                                 <div>
                                     <video
-                                        src={`http://localhost:3000/chat/${Message.message}`}
+                                        src={`http://localhost:3000/chat/${Message?.message}`}
                                         alt="Message Video"
-                                        style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft:"5px" }}
+                                        style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft: "5px" }}
                                     />
-                                    <p style={{ textAlign: "left",  fontSize:"12px"   }}>{Message.time}</p>
+                                    <p style={{ textAlign: "left", fontSize: "12px" }}>{Message?.time}</p>
+                                </div>
+                            ) : String(Message.message)?.startsWith("file") ? (
+                                <div>
+                                    {Message.message.endsWith(".pdf") ? (
+                                        <div>
+                                            <a
+                                                href={`http://localhost:3000/chat/${Message?.message}`}
+                                                target="_blank"
+                                            >
+                                                <FontAwesomeIcon icon={faFilePdf} style={{ fontSize: "90px", color: "red" }} />
+                                            </a>
+                                            <p style={{ textAlign: "left", fontSize: "12px", margin: "-2px 0 0 0" }}>{Message.message}</p>
+                                            <p style={{ textAlign: "left", fontSize: "12px" }}>{Message.time}</p>
+                                        </div>
+                                    ) : (Message.message.endsWith(".ppt") || Message.message.endsWith(".pptx")) ? (
+                                        <div>
+                                            <a
+                                                href={`http://localhost:3000/chat/${Message?.message}`}
+                                                target="_blank"
+                                            >
+                                                <FontAwesomeIcon icon={faFilePowerpoint} style={{ fontSize: "90px", color: "blue" }} />
+                                            </a>
+                                            <p style={{ textAlign: "left", fontSize: "12px", margin: "-2px 0 0 0" }}>{Message.message}</p>
+                                            <p style={{ textAlign: "left", fontSize: "12px" }}>{Message.time}</p>
+                                        </div>
+                                    ) :
+                                        (Message.message.endsWith(".doc") || Message.message.endsWith(".docxx")) ? (
+                                            <div >
+                                                <a
+                                                    href={`http://localhost:3000/chat/${Message?.message}`}
+                                                    target="_blank"
+                                                >
+                                                    <FontAwesomeIcon icon={faFileWord} style={{ fontSize: "90px", color: "blue" }} />
+                                                </a>
+                                                <p style={{ textAlign: "left", fontSize: "12px", margin: "-2px 0 0 0" }}>{Message.message}</p>
+                                                <p style={{ textAlign: "left", fontSize: "12px", objectFit: "contain" }}>{Message.time}</p>
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <i className="fa fa-file-o" aria-hidden="true"></i>
+                                                <p style={{ textAlign: "left", marginLeft: "5px" }}>{Message?.message}</p>
+                                            </div>
+                                        )}
                                 </div>
                             ) : (
                                 <div>
-                                    <p style={{ textAlign: "left", marginLeft:"5px" }}>{Message.message}</p>
-                                    <p style={{ textAlign: "left" , fontSize:"12px"  }}>{Message.time}</p>
+                                    <p style={{ textAlign: "left", marginLeft: "5px" }}>{Message?.message}</p>
+                                    <p style={{ textAlign: "left", fontSize: "12px" }}>{Message.time}</p>
                                 </div>
                             )}
 
