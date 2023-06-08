@@ -113,7 +113,6 @@ function Message() {
         socket.on("recive_message", (data) => {
             // console.log(data, "reciver_data");
             setMessage(data);
-
         })
         alluser()
     }, [userId])
@@ -125,8 +124,9 @@ function Message() {
                 receiverId: selectuser._id
             })
             socket.on("allMessages", (data) => {
-                // console.log(data, "data");
                 setAllmessage(data)
+                setMessages("");
+
             })
         }
 
@@ -196,20 +196,13 @@ function Message() {
     const groupedMessages = groupMessagesByDay();
     let previousDate = null;
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const messageInput = document.getElementById('message-input');
-        messageInput.addEventListener('keyup', (event) => {
-            if (event.key === 'Enter') {
-                sendmessage();
-            }
-        });
-    })
+
 
     return (
         <div>
-            <Container style={{ border: "2px solid black", padding: "2px" }}>
+            <Container style={{ padding: "2px" }}>
                 <Grid container xs={12}>
-                    <Grid xs={12}>
+                    <Grid xs={12} style={{ backgroundColor: "#1876d2", color: "#fff" }}>
                         <Grid
                             xs={12} md={12}
                             key={loginuser?.id}
@@ -225,7 +218,7 @@ function Message() {
                             <p style={{ margin: "10px 15px" }}>{loginuser?.userName}</p>
                         </Grid>
                     </Grid>
-                    <Grid xs={12} md={3} style={{ border: "2px solid red", marginBottom: "15px" }}>
+                    <Grid xs={12} md={3} style={{ backgroundColor: "#252b45", color: "#fff", paddingTop: "10px" }}>
                         {users.map((user) => (
                             <Grid
                                 xs={8}
@@ -245,11 +238,11 @@ function Message() {
                             </Grid>
                         ))}
                     </Grid>
-                    <Grid xs={12} md={9} style={{ border: "2px solid blue" }}>
+                    <Grid xs={12} md={9} >
                         <Grid
                             xs={12} md={12}
                             key={selectuser?.id}
-                            style={{ width: "100%", display: "flex" }}>
+                            style={{ width: "100%", display: "flex", backgroundColor: "#252b45", color: "#fff" }}>
                             <Avatar
                                 alt={selectuser?.userName}
                                 src={selectuser?.image ? `http://localhost:3000/${selectuser?.image}` : <PersonIcon />}
@@ -289,7 +282,7 @@ function Message() {
                                         <div key={index}>
                                             {showDate && (
                                                 <p style={{ textAlign: "center", marginTop: "10px", color: "gray" }}>
-                                                    {showDate == "Invalid Date" ? " " : showDate}
+                                                    <span >{showDate == "Invalid Date" ? " " : showDate}</span>
                                                 </p>
                                             )}
                                             {group?.messages?.map((message) => {
@@ -313,7 +306,7 @@ function Message() {
                                                                     alt="Message Image"
                                                                     style={{ textAlign: "end", width: "50%", height: "300px", objectFit: "cover" }}
                                                                 />
-                                                                <p style={{ textAlign: "start", color: "#fff", marginRight: "5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
+                                                                <p style={{ textAlign: "end", color: "#fff", margin: " -5px 0 5px 5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
                                                             </div>
                                                         );
                                                     } else if (message?.message?.startsWith("video")) {
@@ -324,7 +317,7 @@ function Message() {
                                                                     alt="Message Video"
                                                                     style={{ width: "50%", height: "300px", objectFit: "cover" }}
                                                                 />
-                                                                <p style={{ textAlign: "start", color: "#fff", marginRight: "5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
+                                                                <p style={{ textAlign: "end", color: "#fff", margin: " -5px 0 5px 5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
                                                             </div>
                                                         );
                                                     } else if (message?.message?.startsWith("file")) {
@@ -338,7 +331,7 @@ function Message() {
                                                                     >
                                                                         <FontAwesomeIcon icon={faFilePdf} style={{ fontSize: "70px", color: "red" }} />
                                                                     </a>
-                                                                    <p style={{ textAlign: "end", color: "#fff", marginRight: "5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
+                                                                    <p style={{ textAlign: "end", color: "#fff", margin: " 0 0 5px 5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
                                                                 </div>
                                                             );
                                                         } else if (fileExtension === "ppt" || fileExtension === "pptx") {
@@ -350,7 +343,7 @@ function Message() {
                                                                     >
                                                                         <FontAwesomeIcon icon={faFilePowerpoint} style={{ fontSize: "70px", color: "blue" }} />
                                                                     </a>
-                                                                    <p style={{ textAlign: "end", color: "#fff", marginRight: "5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
+                                                                    <p style={{ textAlign: "end", color: "#fff", margin: " 0 0 5px 5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
                                                                 </div>
                                                             );
                                                         }
@@ -363,7 +356,7 @@ function Message() {
                                                                     >
                                                                         <FontAwesomeIcon icon={faFileWord} style={{ fontSize: "70px", color: "blue" }} />
                                                                     </a>
-                                                                    <p style={{ textAlign: "end", color: "#fff", marginRight: "5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
+                                                                    <p style={{ textAlign: "end", color: "#fff", margin: " 0 0 5px 5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
                                                                 </div>
                                                             );
                                                         }
@@ -388,7 +381,7 @@ function Message() {
                                                                     alt="Message Image"
                                                                     style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft: "5px" }}
                                                                 />
-                                                                <p style={{ textAlign: "start", color: "#fff", marginRight: "5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
+                                                                <p style={{ textAlign: "start", color: "#fff", margin: " -5px 0 5px 5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
                                                             </div>
                                                         );
                                                     } else if (message?.message?.startsWith("video")) {
@@ -399,7 +392,7 @@ function Message() {
                                                                     alt="Message Video"
                                                                     style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft: "5px" }}
                                                                 />
-                                                                <p style={{ textAlign: "start", color: "#fff", marginRight: "5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
+                                                                <p style={{ textAlign: "start", color: "#fff", margin: " -5px 0 5px 5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{time}</span></span></p>
                                                             </div>
                                                         );
                                                     } else if (message?.message?.startsWith("file")) {
@@ -468,7 +461,7 @@ function Message() {
                                         alt="Message Image"
                                         style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft: "5px" }}
                                     />
-                                    <p style={{ textAlign: "left", fontSize: "12px" }}>{Message?.time}</p>
+                                    <p style={{ textAlign: "start", color: "#fff", margin: " -5px 0 5px 5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{Message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{Message?.time}</span></span></p>
                                 </div>
                             ) : String(Message.message)?.startsWith("video") ? (
                                 <div>
@@ -477,7 +470,7 @@ function Message() {
                                         alt="Message Video"
                                         style={{ width: "50%", height: "300px", objectFit: "cover", marginLeft: "5px" }}
                                     />
-                                    <p style={{ textAlign: "left", fontSize: "12px" }}>{Message?.time}</p>
+                                    <p style={{ textAlign: "start", color: "#fff", margin: " -5px 0 5px 5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{Message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{Message?.time}</span></span></p>
                                 </div>
                             ) : String(Message.message)?.startsWith("file") ? (
                                 <div>
@@ -489,8 +482,7 @@ function Message() {
                                             >
                                                 <FontAwesomeIcon icon={faFilePdf} style={{ fontSize: "70px", color: "red" }} />
                                             </a>
-                                            <p style={{ textAlign: "left", fontSize: "12px", margin: "-2px 0 0 0" }}>{Message.message}</p>
-                                            <p style={{ textAlign: "left", fontSize: "12px" }}>{Message.time}</p>
+                                            <p style={{ textAlign: "start", color: "#fff", marginRight: "5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{Message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{Message?.time}</span></span></p>
                                         </div>
                                     ) : (Message.message.endsWith(".ppt") || Message.message.endsWith(".pptx")) ? (
                                         <div>
@@ -500,8 +492,7 @@ function Message() {
                                             >
                                                 <FontAwesomeIcon icon={faFilePowerpoint} style={{ fontSize: "70px", color: "blue" }} />
                                             </a>
-                                            <p style={{ textAlign: "left", fontSize: "12px", margin: "-2px 0 0 0" }}>{Message.message}</p>
-                                            <p style={{ textAlign: "left", fontSize: "12px" }}>{Message.time}</p>
+                                            <p style={{ textAlign: "start", color: "#fff", marginRight: "5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{Message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{Message?.time}</span></span></p>
                                         </div>
                                     ) :
                                         (Message.message.endsWith(".doc") || Message.message.endsWith(".docxx")) ? (
@@ -512,13 +503,12 @@ function Message() {
                                                 >
                                                     <FontAwesomeIcon icon={faFileWord} style={{ fontSize: "70px", color: "blue" }} />
                                                 </a>
-                                                <p style={{ textAlign: "left", fontSize: "12px", margin: "-2px 0 0 0" }}>{Message.message}</p>
-                                                <p style={{ textAlign: "left", fontSize: "12px", objectFit: "contain" }}>{Message.time}</p>
+                                                <p style={{ textAlign: "start", color: "#fff", marginRight: "5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{Message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{Message?.time}</span></span></p>
                                             </div>
                                         ) : (
                                             <div>
                                                 <i className="fa fa-file-o" aria-hidden="true"></i>
-                                                <p style={{ textAlign: "left", marginLeft: "5px" }}>{Message?.message}</p>
+                                                <p style={{ textAlign: "start", color: "#fff", marginRight: "5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{Message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{Message?.time}</span></span></p>
                                             </div>
                                         )}
                                 </div>
@@ -527,8 +517,6 @@ function Message() {
                                     {
                                         Message.message ? <p style={{ textAlign: "start", color: "#fff", marginRight: "5px" }}><span style={{ backgroundColor: "#252b45", padding: " 4px 7px", borderRadius: "5px" }}>{Message?.message}<span style={{ fontSize: "10px", margin: "0 0 0 5px" }}>{Message?.time}</span></span></p> : ""
                                     }
-                                    {/* <span style={{ textAlign: "left", marginLeft: "5spanx" }}>{Message?.message}</span>
-                                    <span style={{ textAlign: "left", fontSize: "12px" }}>{Message.time}</span> */}
                                 </div>
                             )}
 
@@ -551,7 +539,6 @@ function Message() {
                                 />
                                 <input
                                     type="file"
-                                    id="message-input"
                                     style={{ display: 'none' }}
                                     ref={fileInputRef}
                                     onChange={handleFileChange}
