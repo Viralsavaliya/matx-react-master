@@ -37,6 +37,21 @@ function ViewAlluser() {
         alluser();
     }, [search])
 
+
+    const sendNotification = async (title, body) =>{
+        const data = {
+            deviceToken: token,
+        };
+
+        try {
+            const response = await axios.post('http://localhost:3000/api/auth/notifiction', data);
+            console.log('Notification sent successfully:', response.data);
+        } catch (error) {
+            console.log('Error sending notification:', error);
+        }
+    }
+
+
     return (
         <div>
             <Container>
@@ -46,7 +61,7 @@ function ViewAlluser() {
                     </Grid>
                     <Grid item xs={11} md={12} style={{ textAlign: "end" }} >
                         <TextField
-                            style={{ margin: "10px 0 10px 0px", width:"20%" , alignItems: "right" }}
+                            style={{ margin: "10px 0 10px 0px", width: "20%", alignItems: "right" }}
                             fullWidth
                             variant="outlined"
                             label="Search"
@@ -59,8 +74,8 @@ function ViewAlluser() {
                         <Grid xs={6} md={12} >
                             {user?.map((data) => (
                                 <Grid xs={10} md={12} style={{ margin: "10px 0", display: "flex" }}>
-                                    <Grid xs={8} md={10} key={data?.id} style={{ width: "90%" , display:"flex" }}>
-                                    <Avatar
+                                    <Grid xs={8} md={10} key={data?.id} style={{ width: "90%", display: "flex" }}>
+                                        <Avatar
                                             alt={data.userName}
                                             src={data.image ? `http://localhost:3000/${data?.image}` : <PersonIcon />}
                                             style={{ objectFit: "cover", borderRadius: "50%", margin: "3px 10px 15px 10px" }}
@@ -90,6 +105,7 @@ function ViewAlluser() {
                             ))}
                         </Grid>
                     </Grid>
+                            <Button onClick={sendNotification}>notification</Button>
                 </Grid>
             </Container>
         </div>

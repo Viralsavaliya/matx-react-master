@@ -1,4 +1,8 @@
 import { initializeApp } from "firebase/app";
+import firebase from 'firebase/app';
+import 'firebase/messaging';
+import 'firebase/firestore';
+
 
 import { getAuth } from "firebase/auth";
 // const firebaseConfig = {
@@ -21,6 +25,16 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// firebase.initializeApp(firebaseConfig);  
+const messaging = app.messaging();
+messaging.requestPermission().then(() => {
+  console.log('Notification permission granted.');
+  return messaging.getyoken();
+}).then((token) => {
+  console.log('Device token:', token);
+}).catch((error) => {
+  console.error('Error obtaining permission:', error);
+});
 
+const auth = getAuth(app);
 export {auth}
