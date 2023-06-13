@@ -1,6 +1,7 @@
   import { createContext, useEffect, useReducer } from 'react';
 import axios from 'axios';
 import { MatxLoading } from 'app/components';
+import { enqueueSnackbar } from "notistack";
 
 const initialState = {
   user: null,
@@ -34,9 +35,9 @@ const reducer = (state, action) => {
     }
 
     case 'LOGIN': {
-      console.log(state,"loginstate")
+      // console.log(state,"loginstate")
       const { user } = action.payload;
-      console.log({user});
+      // console.log({user});
       return { ...state, isAuthenticated: true, user };
     }
 
@@ -73,6 +74,11 @@ export const AuthProvider = ({ children }) => {
     const  { user } = response.data.data;
     const  { token } = response.data.data;
     localStorage.setItem('token', 'Bearer'+ " " + token);
+    enqueueSnackbar(
+      response.data.message,
+      { variant: "success" },
+      { autoHideDuration: 1000 }
+    );
     dispatch({ type: 'LOGIN', payload: { user } });
   };
 
@@ -81,6 +87,11 @@ export const AuthProvider = ({ children }) => {
     const  { user } = response.data.data;
     const  { token } = response.data.data;
     localStorage.setItem('token', 'Bearer'+ " " + token);
+    enqueueSnackbar(
+      response.data.message,
+      { variant: "success" },
+      { autoHideDuration: 1000 }
+    );
     dispatch({ type: 'LOGIN', payload: { user } });
     console.log(user)
   };
@@ -89,18 +100,32 @@ export const AuthProvider = ({ children }) => {
     const  { user } = response.data.data;
     const  { token } = response.data.data;
     localStorage.setItem('token', 'Bearer'+ " " + token);
+    enqueueSnackbar(
+      response.data.message,
+      { variant: "success" },
+      { autoHideDuration: 1000 }
+    );
     dispatch({ type: 'LOGIN', payload: { user } });
   };
 
   const register = async (email, userName, password) => {
     const response = await axios.post('http://localhost:3000/api/auth/register', { email, userName, password });
     const { user } = response.data;
-
+    enqueueSnackbar(
+      response.data.message,
+      { variant: "success" },
+      { autoHideDuration: 1000 }
+    );
     dispatch({ type: 'REGISTER', payload: { user } });
   };
 
   const logout = () => {
     localStorage.setItem('token', 'Bearer'+ " " + " ");
+    enqueueSnackbar(
+      "Account Logout successfully",
+      { variant: "success" },
+      { autoHideDuration: 1000 }
+    );
     dispatch({ type: 'LOGOUT' });
   };
 

@@ -8,6 +8,7 @@ import { Formik } from 'formik';
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import { enqueueSnackbar } from "notistack";
 
 const FlexBox = styled(Box)(() => ({ display: 'flex', alignItems: 'center' }));
 
@@ -63,6 +64,11 @@ const JwtRegister = () => {
       setLoading(false);
     } catch (e) {
       console.log(e);
+      enqueueSnackbar(
+        e.response.data.message,
+        { variant: "error" },
+        { autoHideDuration: 1000 }
+      );
       setLoading(false);
     }
   };

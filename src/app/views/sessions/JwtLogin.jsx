@@ -94,6 +94,11 @@ const JwtLogin = () => {
       await login(values.email, values.password);
       navigate('/');
     } catch (e) {
+      enqueueSnackbar(
+        e.response.data.message,
+        { variant: "error" },
+        { autoHideDuration: 1000 }
+      );
       setLoading(false);
     }
   };
