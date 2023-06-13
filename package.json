@@ -42,6 +42,7 @@
     "echarts": "^5.4.1",
     "echarts-for-react": "^3.0.2",
     "firebase": "^9.22.0",
+    "firebase-admin": "^11.9.0",
     "formik": "^2.2.9",
     "fs": "^0.0.1-security",
     "jwt-decode": "^3.1.2",
