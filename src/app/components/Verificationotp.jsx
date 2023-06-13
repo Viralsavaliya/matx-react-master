@@ -13,7 +13,7 @@ import {
   import React, { useEffect, useState } from "react";
   import { useMutation } from "react-query";
   import * as yup from "yup";
-  import { useNavigate } from "react-router-dom";
+  import { useNavigate , useLocation } from "react-router-dom";
   // import {auth} from './config';
   // import { signInWithPopup ,GoogleAuthProvider , FacebookAuthProvider , GithubAuthProvider , TwitterAuthProvider} from "firebase/auth";
   
@@ -25,6 +25,9 @@ import {
   
     const [value, setValue] = useState(Date.now());
     const navigate = useNavigate();
+    const location = useLocation();
+    const stateData = location.state;
+    console.log(stateData,"stateData");
   
     const getusers = () => {
       const token = localStorage.getItem('token');
@@ -47,7 +50,7 @@ import {
       const token = localStorage.getItem('token');
       axios.defaults.headers.common['Authorization'] = ` ${token}`;
       await axios
-        .post(`http://localhost:3000/api/auth/verificationotp`, value)
+        .post(`http://localhost:3000/api/auth/verificationotp?data=${stateData}`, value)
         .then((res) => {
           if (res) {
             console.log("Email send  Successfully");
@@ -56,7 +59,13 @@ import {
               { variant: "success" },
               { autoHideDuration: 1000 }
             );
-            navigate('/forgetpassword')
+            if(stateData === "Profile"){
+            navigate('/session/signin')
+            localStorage.setItem('token', 'Bearer'+ " " );
+            }
+            else{
+              navigate('/forgetpassword')
+            }
           }
         })
         .catch((error) => {

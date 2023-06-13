@@ -43,41 +43,7 @@ function Resetpasswordsendemail() {
 
 
 
-  // const { mutateAsync: cratestate } = useMutation(async (value) => {
-  //   await axios
-  //     .post(`http://localhost:3000/api/auth/forget-password`, value)
-  //     setLoading(true);
-  //     setApiCallDuration(4000)
-  //     .then((res) => {
-      
-  //       console.log(res.data);
-  //       const token = res.data.data
-  //       localStorage.setItem('token', 'Bearer' + " " + token);
-  //       if (res) {
-  //         console.log("Email send  Successfully");
-  //         enqueueSnackbar(
-  //           res.data.message,
-  //           { variant: "success" },
-  //           { autoHideDuration: 1000 }
-  //         );
-  //         navigate('/verificationotp')
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       if (error.response.status === 400) {
-  //         console.log("axios error");
-  //         enqueueSnackbar(
-  //           error.response.data.message,
-  //           { variant: "error" },
-  //           { autoHideDuration: 1000 }
-  //         );
-  //       }
-  //     } finally {
-  //       setLoading(false); // Reset the loading state once the API call is completed
-  //     }
-  //     );
-  // });
-
+ 
 
   const { mutateAsync: cratestate } = useMutation(async (value) => {
     setLoading(true);

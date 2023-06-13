@@ -31,6 +31,7 @@ import { useMutation } from "react-query";
 import * as yup from "yup";
 import { redirect, useNavigate } from "react-router-dom";
 import AllFollowingshow from './AllFollowingshow';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 const validationSchema = yup.object({
@@ -54,9 +55,10 @@ function Profile() {
   const [value, setValue] = useState(Date.now());
   const navigate = useNavigate();
   const [selectedValue, setSelectedValue] = useState('');
-  const [image, setimage] = useState("");  
-  const [follow, setfollow] = useState("");  
+  const [image, setimage] = useState("");
+  const [follow, setfollow] = useState("");
   const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
+  const [loading, setLoading] = useState(false);
 
 
   const token = localStorage.getItem('token');
@@ -68,11 +70,9 @@ function Profile() {
     padding: theme.spacing(1),
     // textAlign: 'center',
     fontSize: "20px",
-    margin:"10px",
+    margin: "10px",
     // color: theme.palette.text.secondary,
   }));
-
-
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -102,13 +102,13 @@ function Profile() {
   const getfollowing = () => {
     axios.get('http://localhost:3000/api/follow/following')
       .then((res) => {
-            setfollow(res.data.data[0]);
+        setfollow(res.data.data[0]);
       })
   };
 
   const allfollowingshow = () => {
     const alldata = follow.followedUsers;
-    console.log(alldata,"alldata");
+    console.log(alldata, "alldata");
     navigate('/allfollowingshow');
   }
 
@@ -174,7 +174,7 @@ function Profile() {
       age: "",
       mobileNo: "",
       gender: "",
-      address:""
+      address: ""
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -184,11 +184,30 @@ function Profile() {
         age: values.age,
         mobileNo: values.mobileNo,
         gender: selectedValue,
-        address:coordinates
+        address: coordinates
       });
     },
   });
   const { handleChange, handleSubmit, setFieldValue } = formik;
+
+  const deletedaccount = () => {
+    setLoading(true);
+    console.log(loading,"loading");
+    try{
+
+      axios
+        .post(`http://localhost:3000/api/auth/forget-password`)
+        .then((res) => {
+          setLoading(false);
+          navigate('/verificationotp', { state: "Profile" });
+        })
+      }catch(e){
+        console.log(e);
+        setLoading(false);
+      }
+    
+
+  }
 
 
 
@@ -196,7 +215,7 @@ function Profile() {
   return (
     <div>
       <Container >
-        <Grid container spacing={2} style={{border:"1px solid black", margin:"10px 0 " , borderRadius:"15px" , padding:"5px" }}>
+        <Grid container spacing={2} style={{ border: "1px solid black", margin: "10px 0 ", borderRadius: "15px", padding: "5px" }}>
 
           <Grid xs={12} style={{ textAlign: "center" }}>
             <h1>Profile</h1>
@@ -296,9 +315,9 @@ function Profile() {
                             </Grid>
                             <Grid xs={6} mb={1}>
                               <div>
-                                Latitude: {coordinates.lat} 
-                                </div><div>
-                               Longitude: {coordinates.lng}
+                                Latitude: {coordinates.lat}
+                              </div><div>
+                                Longitude: {coordinates.lng}
                               </div>
                             </Grid>
                             <Grid xs={6}>
@@ -338,7 +357,21 @@ function Profile() {
             </div>
           </Grid>
           <Grid item xs={8} >
-            <div onClick={allfollowingshow}  style={{fontSize:"20px" , textAlign:"center"}}>Following<br/>{follow.followCount}</div> 
+            <div style={{ textAlign: "right" }}>
+              <Button
+                variant='contained'
+                color="error"
+                disabled={loading}
+                onClick={deletedaccount}>
+               <span style={{paddingRight:"5px"}}>Deleted Account </span>  
+                {loading && (
+                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <CircularProgress size={20} />
+                  </div>
+                )}
+              </Button>
+            </div>
+            <div onClick={allfollowingshow} style={{ fontSize: "20px", textAlign: "center" }}>Following<br />{follow.followCount}</div>
             <Item> <FontAwesomeIcon icon={faUser} /> &nbsp; {user.userName}</Item>
             <Item><FontAwesomeIcon icon={faEnvelope} /> &nbsp;{user.email}</Item>
             {/* <Item>{user.gender}</Item> */}
