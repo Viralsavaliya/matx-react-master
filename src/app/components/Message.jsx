@@ -277,7 +277,7 @@ function Message() {
                             <p style={{ margin: "10px 15px" }}>{loginuser?.userName}</p>
                         </Grid>
                     </Grid>
-                    <Grid xs={12} md={3} style={{ backgroundColor: "#252b45", color: "#fff", paddingTop: "10px" }}>
+                    <Grid xs={12} md={3} style={{ backgroundColor: "#252b45", color: "#fff", paddingTop: "10px" ,height:"614px", overflowY: 'scroll',  overflowY: 'auto' }}>
                         {users.map((user) => (
                             <Grid
                                 xs={8}
@@ -301,7 +301,7 @@ function Message() {
                         <Grid
                             xs={12} md={12}
                             key={selectuser?.id}
-                            style={{ width: "100%", display: "flex", backgroundColor: "#252b45", color: "#fff" , overflowY: 'scroll',  overflowY: 'auto' }}>
+                            style={{ width: "100%", display: "flex", backgroundColor: "#252b45", color: "#fff" }}>
                             <Avatar
                                 alt={selectuser?.userName}
                                 src={selectuser?.image ? `http://localhost:3000/${selectuser?.image}` : <PersonIcon />}
