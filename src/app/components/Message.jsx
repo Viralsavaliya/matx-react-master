@@ -301,7 +301,7 @@ function Message() {
                         <Grid
                             xs={12} md={12}
                             key={selectuser?.id}
-                            style={{ width: "100%", display: "flex", backgroundColor: "#252b45", color: "#fff" ,00 overflowY: 'scroll',  overflowY: 'auto' }}>
+                            style={{ width: "100%", display: "flex", backgroundColor: "#252b45", color: "#fff" , overflowY: 'scroll',  overflowY: 'auto' }}>
                             <Avatar
                                 alt={selectuser?.userName}
                                 src={selectuser?.image ? `http://localhost:3000/${selectuser?.image}` : <PersonIcon />}
