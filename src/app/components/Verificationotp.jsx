@@ -27,7 +27,7 @@ import {
     const navigate = useNavigate();
     const location = useLocation();
     const stateData = location.state;
-    console.log(stateData,"stateData");
+    // console.log(stateData,"stateData");
   
     const getusers = () => {
       const token = localStorage.getItem('token');
@@ -53,7 +53,7 @@ import {
         .post(`http://localhost:3000/api/auth/verificationotp?data=${stateData}`, value)
         .then((res) => {
           if (res) {
-            console.log("Email send  Successfully");
+            // console.log("Email send  Successfully");
             enqueueSnackbar(
               res.data.message,
               { variant: "success" },
@@ -70,7 +70,7 @@ import {
         })
         .catch((error) => {
           if (error.response.status === 400) {
-            console.log("axios error");
+            // console.log("axios error");
             enqueueSnackbar(
               error.response.data.message,
               { variant: "error" },

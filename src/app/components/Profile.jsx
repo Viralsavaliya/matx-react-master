@@ -157,7 +157,7 @@ function Profile() {
       })
       .catch((error) => {
         if (error.response.status === 422) {
-          console.log("axios error");
+          // console.log("axios error");
           enqueueSnackbar(
             "This state already added",
             { variant: "error" },
@@ -192,7 +192,7 @@ function Profile() {
 
   const deletedaccount = () => {
     setLoading(true);
-    console.log(loading,"loading");
+    // console.log(loading,"loading");
     try{
 
       axios

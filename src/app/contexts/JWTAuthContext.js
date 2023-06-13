@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }) => {
       { autoHideDuration: 1000 }
     );
     dispatch({ type: 'LOGIN', payload: { user } });
-    console.log(user)
+    // console.log(user)
   };
   const githubLogin = async (data) => {
     const response = await axios.post('http://localhost:3000/api/auth/login',data);

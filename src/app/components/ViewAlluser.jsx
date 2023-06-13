@@ -26,7 +26,7 @@ function ViewAlluser() {
     }
 
     const sendrequest = (id) => {
-        console.log(id);
+        // console.log(id);
         axios.post(`http://localhost:3000/api/follow?followerId=${id}`)
             .then((response) => {
                 // console.log(response);

@@ -54,17 +54,17 @@ function Resetpasswordsendemail() {
         value
       );
   
-      console.log(res.data);
+      // console.log(res.data);
       const token = res.data.data;
       localStorage.setItem('token', 'Bearer' + ' ' + token);
       if (res) {
-        console.log('Email send Successfully');
+        // console.log('Email send Successfully');
         enqueueSnackbar(res.data.message, { variant: 'success' });
         navigate('/verificationotp');
       }
     } catch (error) {
       if (error.response.status === 400) {
-        console.log('axios error');
+        // console.log('axios error');
         enqueueSnackbar(error.response.data.message, { variant: 'error' });
       }
     } finally {

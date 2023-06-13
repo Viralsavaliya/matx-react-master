@@ -63,7 +63,7 @@ const JwtRegister = () => {
       navigate('/');
       setLoading(false);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       enqueueSnackbar(
         e.response.data.message,
         { variant: "error" },

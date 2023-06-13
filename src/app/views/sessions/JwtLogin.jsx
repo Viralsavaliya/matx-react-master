@@ -39,8 +39,8 @@ const reducer = (state, action) => {
  
     case 'LOGIN': {
       const { isAuthenticated,user } = action.payload;
-      console.log(user,"username")
-      console.log(state,"state")
+      // console.log(user,"username")
+      // console.log(state,"state")
       return { ...state,  isAuthenticated, user };
       // console.log(isAuthenticated)
       

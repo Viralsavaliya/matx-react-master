@@ -78,7 +78,7 @@ function ViewAllPost() {
       axios
         .post(`http://localhost:3000/api/like`, { postid: user._id })
         .then((res) => {
-          console.log(res.data.data);
+          // console.log(res.data.data);
           user.isLikedByUser = true;
           user.likescount += 1;
           setPost((prevPosts) => {
@@ -92,7 +92,7 @@ function ViewAllPost() {
       axios
         .delete(`http://localhost:3000/api/like?postid=${user._id}`)
         .then((res) => {
-          console.log(res.data.data);
+          // console.log(res.data.data);
           user.isLikedByUser = false;
           user.likescount -= 1;
           setPost((prevPosts) => {
