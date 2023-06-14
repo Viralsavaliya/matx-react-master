@@ -4,17 +4,19 @@ import { Box, styled, useTheme } from '@mui/material';
 import { Paragraph } from 'app/components/Typography';
 import useAuth from 'app/hooks/useAuth';
 import { Formik } from 'formik';
-import { useState , useReducer , createContext} from 'react';
+import { useState, useReducer, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import {auth} from '../../components/config';
+import { auth } from '../../components/config';
 import axios from "axios";
 import { enqueueSnackbar } from "notistack";
 import GoogleIcon from '@mui/icons-material/Google';
 import GithubIcon from '@mui/icons-material/GitHub';
-import { signInWithPopup ,GoogleAuthProvider  , GithubAuthProvider  } from "firebase/auth";
-import {Button} from "@mui/material";
+import { signInWithPopup, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
+import { Button } from "@mui/material";
 // import AuthContext from '../../contexts/JWTAuthContext'
+import { initializeApp } from 'firebase/app';
+import { getMessaging, getToken } from 'firebase/messaging';
 
 const FlexBox = styled(Box)(() => ({ display: 'flex', alignItems: 'center' }));
 
@@ -36,19 +38,22 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
- 
+
     case 'LOGIN': {
-      const { isAuthenticated,user } = action.payload;
+      const { isAuthenticated, user } = action.payload;
       // console.log(user,"username")
       // console.log(state,"state")
-      return { ...state,  isAuthenticated, user };
+      return { ...state, isAuthenticated, user };
       // console.log(isAuthenticated)
-      
+
     }
     default:
       return state;
   }
 };
+
+
+
 
 
 
@@ -81,12 +86,22 @@ const validationSchema = Yup.object().shape({
   email: Yup.string().email('Invalid Email address').required('Email is required!')
 });
 
+const firebaseConfig = {
+  apiKey: "AIzaSyDugv256WzQ4HY0GfhEcj6O3og3Q-XhzCc",
+  authDomain: "new-project-386405.firebaseapp.com",
+  projectId: "new-project-386405",
+  storageBucket: "new-project-386405.appspot.com",
+  messagingSenderId: "422790938507",
+  appId: "1:422790938507:web:c449df2f0f996fe3be398e",
+  measurementId: "G-MMP9ZLQP4X"
+};
+
 const JwtLogin = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { login,googleLogin ,githubLogin} = useAuth();
+  const { login, googleLogin, githubLogin } = useAuth();
 
   const handleFormSubmit = async (values) => {
     setLoading(true);
@@ -103,11 +118,40 @@ const JwtLogin = () => {
     }
   };
 
+  useEffect(() => {
+    const initializeFirebaseMessaging = async () => {
+      try {
+        const app = initializeApp(firebaseConfig);
+        const messaging = getMessaging(app);
+
+        await Notification.requestPermission();
+        const token = await getToken(messaging);
+
+        if (token) {
+          console.log('Device token:', token);
+          // Send the token to the server or handle it as needed
+        } else {
+          console.log('No device token available');
+        }
+      } catch (error) {
+        console.error('Error initializing Firebase Messaging:', error);
+      }
+    };
+
+    initializeFirebaseMessaging();
+  }, []);
+
+  const sendTokenToServer = (token) => {
+    console.log(token, "sendtokenserver");
+    // Send the token to your server for storage or further processing
+    // You can make an API call to your server and pass the token as a parameter
+  };
+
 
 
   const handleclick = async () => {
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider).then(async(data) => {
+    signInWithPopup(auth, provider).then(async (data) => {
       const userdata = {
         userEmail: data.user.email,
         googleId: data.user.uid,
@@ -123,7 +167,7 @@ const JwtLogin = () => {
   const handleclickgithub = async () => {
     const provider = new GithubAuthProvider();
 
-    signInWithPopup(auth, provider).then(async(data) => {
+    signInWithPopup(auth, provider).then(async (data) => {
       // console.log(data);
       const userdata = {
         userEmail: data.user.email,
@@ -206,7 +250,7 @@ const JwtLogin = () => {
                       onChange={handleChange}
                       helperText={touched.password && errors.password}
                       error={Boolean(errors.password && touched.password)}
-                      // sx={{ mb: 1.5 }}
+                    // sx={{ mb: 1.5 }}
                     />
 
                     <FlexBox justifyContent="space-between">
@@ -252,12 +296,12 @@ const JwtLogin = () => {
                   </form>
                 )}
               </Formik>
-        <Grid xs={24} style={{display:"flex"}}>
-        <Button style={{boxShadow:"2px 2px 2px black inset" , padding: "0 3px" , marginRight:"8px"}} onClick={handleclick} ><GoogleIcon /><p style={{paddingLeft:6}}> Sign in with Google</p></Button>
-        <Button style={{boxShadow:"2px 2px 2px black inset", padding:"0 3px"}} onClick={handleclickgithub} ><GithubIcon /><p style={{paddingLeft:6}}> Sign in with Github</p></Button>
-          </Grid>
+              <Grid xs={24} style={{ display: "flex" }}>
+                <Button style={{ boxShadow: "2px 2px 2px black inset", padding: "0 3px", marginRight: "8px" }} onClick={handleclick} ><GoogleIcon /><p style={{ paddingLeft: 6 }}> Sign in with Google</p></Button>
+                <Button style={{ boxShadow: "2px 2px 2px black inset", padding: "0 3px" }} onClick={handleclickgithub} ><GithubIcon /><p style={{ paddingLeft: 6 }}> Sign in with Github</p></Button>
+              </Grid>
             </ContentBox>
-      </Grid>
+          </Grid>
         </Grid>
       </Card>
     </JWTRoot>
